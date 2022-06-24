@@ -10,8 +10,11 @@ import (
 func main() {
 
 	var engine TextEngine = SimpleEngine{}
+	m := InitMap()
 
 	reader := bufio.NewReader(os.Stdin)
+
+	fmt.Println(m.Print())
 
 	for {
 		fmt.Print("")
@@ -37,4 +40,19 @@ type SimpleEngine struct{}
 
 func (se SimpleEngine) Machine(text string) string {
 	return "ich kann gar nix"
+}
+
+func InitMap() Map {
+	fields := make([][]MapElement, 10)
+
+	for n := range fields {
+		fields[n] = make([]MapElement, 10)
+	}
+
+	for x := 0; x < 10; x++ {
+		for y := 0; y < 10; y++ {
+			fields[x][y] = NewField('')
+		}
+	}
+	return Map{Fields: fields}
 }
