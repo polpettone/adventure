@@ -35,8 +35,8 @@ func NewMap(maxX, maxY int) Map {
 
 func (m Map) Print() string {
 	var s string
-	for y := 9; y >= 0; y-- {
-		for x := 0; x < 10; x++ {
+	for y := m.MaxY - 1; y >= 0; y-- {
+		for x := 0; x < m.MaxX; x++ {
 			s += fmt.Sprintf(string(m.Fields[x][y].GetSymbol()))
 		}
 		s += "\n"

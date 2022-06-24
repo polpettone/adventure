@@ -22,7 +22,7 @@ func start() {
 	exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
 
 	bot := NewBot(GOPHER, 0, 0)
-	gameMap := NewMap(10, 10)
+	gameMap := NewMap(80, 30)
 	gameMap.Place(bot)
 	fmt.Println(gameMap.Print())
 
@@ -94,7 +94,7 @@ func (se SimpleEngine) Machine(text string) string {
 		se.Bot.X -= 1
 		se.GameMap.Place(se.Bot)
 		fmt.Println(se.GameMap.Print())
-		return "moved up"
+		return "moved left"
 
 	case "j":
 		if se.Bot.Y == 0 {
@@ -105,7 +105,7 @@ func (se SimpleEngine) Machine(text string) string {
 		se.Bot.Y -= 1
 		se.GameMap.Place(se.Bot)
 		fmt.Println(se.GameMap.Print())
-		return "moved up"
+		return "moved down"
 	}
 
 	return "nothing happend"
