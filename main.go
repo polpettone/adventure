@@ -51,6 +51,10 @@ type SimpleEngine struct {
 	Bot     *Bot
 }
 
+func clearScreen() {
+	fmt.Print("\033[H\033[2J")
+}
+
 func (se SimpleEngine) Machine(text string) string {
 
 	switch text {
@@ -59,6 +63,7 @@ func (se SimpleEngine) Machine(text string) string {
 		if se.Bot.Y == se.GameMap.MaxY-1 {
 			return "wall, cant move"
 		}
+		clearScreen()
 		se.GameMap.Place(NewField(FIELD, se.Bot.X, se.Bot.Y))
 		se.Bot.Y += 1
 		se.GameMap.Place(se.Bot)
@@ -69,6 +74,7 @@ func (se SimpleEngine) Machine(text string) string {
 		if se.Bot.X == se.GameMap.MaxX-1 {
 			return "wall, cant move"
 		}
+		clearScreen()
 		se.GameMap.Place(NewField(FIELD, se.Bot.X, se.Bot.Y))
 		se.Bot.X += 1
 		se.GameMap.Place(se.Bot)
@@ -79,6 +85,7 @@ func (se SimpleEngine) Machine(text string) string {
 		if se.Bot.X == 0 {
 			return "wall, cant move"
 		}
+		clearScreen()
 		se.GameMap.Place(NewField(FIELD, se.Bot.X, se.Bot.Y))
 		se.Bot.X -= 1
 		se.GameMap.Place(se.Bot)
@@ -89,6 +96,7 @@ func (se SimpleEngine) Machine(text string) string {
 		if se.Bot.Y == 0 {
 			return "wall, cant move"
 		}
+		clearScreen()
 		se.GameMap.Place(NewField(FIELD, se.Bot.X, se.Bot.Y))
 		se.Bot.Y -= 1
 		se.GameMap.Place(se.Bot)
