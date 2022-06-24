@@ -23,6 +23,7 @@ func start() {
 
 	bot := NewBot(GOPHER, 0, 0)
 	gameMap := NewMap(80, 30)
+	gameMap.Place(NewField(BOX, 30, 10))
 	gameMap.Place(bot)
 	fmt.Println(gameMap.Print())
 
@@ -35,9 +36,7 @@ func start() {
 	for {
 		os.Stdin.Read(b)
 		text := string(b)
-		response := engine.Machine(text)
-
-		fmt.Printf("%s\n", response)
+		engine.Machine(text)
 
 		if strings.Compare(text, "q") == 0 {
 			fmt.Println("ciao")
