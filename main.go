@@ -1,9 +1,9 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -16,6 +16,11 @@ func main() {
 
 func start() {
 
+	// disable input buffering
+	exec.Command("stty", "-F", "/dev/tty", "cbreak", "min", "1").Run()
+	// do not display entered characters on the screen
+	exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
+
 	bot := NewBot(GOPHER, 0, 0)
 	gameMap := NewMap(10, 10)
 	gameMap.Place(bot)
@@ -25,12 +30,11 @@ func start() {
 		GameMap: gameMap,
 		Bot:     bot,
 	}
-	reader := bufio.NewReader(os.Stdin)
-	for {
-		fmt.Print("")
-		text, _ := reader.ReadString('\n')
-		text = strings.Replace(text, "\n", "", -1)
 
+	var b []byte = make([]byte, 1)
+	for {
+		os.Stdin.Read(b)
+		text := string(b)
 		response := engine.Machine(text)
 
 		fmt.Printf("%s\n", response)
