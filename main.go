@@ -11,6 +11,7 @@ func main() {
 
 	var engine TextEngine = SimpleEngine{}
 	m := InitMap()
+	m.Place(NewBot(GOPHER), 0, 0)
 
 	reader := bufio.NewReader(os.Stdin)
 
@@ -51,7 +52,7 @@ func InitMap() Map {
 
 	for x := 0; x < 10; x++ {
 		for y := 0; y < 10; y++ {
-			fields[x][y] = NewField('')
+			fields[x][y] = NewField(FIELD)
 		}
 	}
 	return Map{Fields: fields}
