@@ -13,16 +13,18 @@ var gameMap models.Map
 var player models.Player
 
 func main() {
+	setupShellSettings()
 	start()
 }
 
-func start() {
-
+func setupShellSettings() {
 	// disable input buffering
 	exec.Command("stty", "-F", "/dev/tty", "cbreak", "min", "1").Run()
 	// do not display entered characters on the screen
 	exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
+}
 
+func initGame() Engine {
 	player := models.NewPlayer(models.GOPHER, 0, 0)
 	gameMap := models.NewMap(80, 30)
 	gameMap.Place(models.NewField(models.BOX, 30, 5))
@@ -36,6 +38,12 @@ func start() {
 		GameMap: gameMap,
 		Player:  player,
 	}
+	return engine
+}
+
+func start() {
+
+	engine := initGame()
 
 	var b []byte = make([]byte, 1)
 	for {
