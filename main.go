@@ -9,9 +9,6 @@ import (
 	"github.com/polpettone/adventure/models"
 )
 
-var gameMap models.Map
-var player models.Player
-
 func main() {
 	setupShellSettings()
 	start()
