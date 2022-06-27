@@ -29,6 +29,8 @@ func initGame() Engine {
 	gameMap.Place(models.NewField(models.BOX, 40, 15))
 	gameMap.Place(models.NewField(models.BOX, 55, 20))
 	gameMap.Place(player)
+
+	clearScreen()
 	fmt.Println(gameMap.Print())
 
 	var engine Engine = SimpleEngine{
