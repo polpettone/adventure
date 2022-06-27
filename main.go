@@ -5,10 +5,12 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+
+	"github.com/polpettone/adventure/models"
 )
 
-var gameMap Map
-var bot Bot
+var gameMap models.Map
+var bot models.Bot
 
 func main() {
 	start()
@@ -21,9 +23,9 @@ func start() {
 	// do not display entered characters on the screen
 	exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
 
-	bot := NewBot(GOPHER, 0, 0)
-	gameMap := NewMap(80, 30)
-	gameMap.Place(NewField(BOX, 30, 10))
+	bot := models.NewBot(models.GOPHER, 0, 0)
+	gameMap := models.NewMap(80, 30)
+	gameMap.Place(models.NewField(models.BOX, 30, 10))
 	gameMap.Place(bot)
 	fmt.Println(gameMap.Print())
 
@@ -50,8 +52,8 @@ type Engine interface {
 }
 
 type SimpleEngine struct {
-	GameMap Map
-	Bot     *Bot
+	GameMap models.Map
+	Bot     *models.Bot
 }
 
 func clearScreen() {
@@ -67,7 +69,7 @@ func (se SimpleEngine) Machine(text string) string {
 			return "wall, cant move"
 		}
 		clearScreen()
-		se.GameMap.Place(NewField(FIELD, se.Bot.X, se.Bot.Y))
+		se.GameMap.Place(models.NewField(models.FIELD, se.Bot.X, se.Bot.Y))
 		se.Bot.Y += 1
 		se.GameMap.Place(se.Bot)
 		fmt.Println(se.GameMap.Print())
@@ -78,7 +80,7 @@ func (se SimpleEngine) Machine(text string) string {
 			return "wall, cant move"
 		}
 		clearScreen()
-		se.GameMap.Place(NewField(FIELD, se.Bot.X, se.Bot.Y))
+		se.GameMap.Place(models.NewField(models.FIELD, se.Bot.X, se.Bot.Y))
 		se.Bot.X += 1
 		se.GameMap.Place(se.Bot)
 		fmt.Println(se.GameMap.Print())
@@ -89,7 +91,7 @@ func (se SimpleEngine) Machine(text string) string {
 			return "wall, cant move"
 		}
 		clearScreen()
-		se.GameMap.Place(NewField(FIELD, se.Bot.X, se.Bot.Y))
+		se.GameMap.Place(models.NewField(models.FIELD, se.Bot.X, se.Bot.Y))
 		se.Bot.X -= 1
 		se.GameMap.Place(se.Bot)
 		fmt.Println(se.GameMap.Print())
@@ -100,7 +102,7 @@ func (se SimpleEngine) Machine(text string) string {
 			return "wall, cant move"
 		}
 		clearScreen()
-		se.GameMap.Place(NewField(FIELD, se.Bot.X, se.Bot.Y))
+		se.GameMap.Place(models.NewField(models.FIELD, se.Bot.X, se.Bot.Y))
 		se.Bot.Y -= 1
 		se.GameMap.Place(se.Bot)
 		fmt.Println(se.GameMap.Print())

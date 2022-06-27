@@ -1,4 +1,4 @@
-package main
+package models
 
 const GOPHER = ''
 const WATER = '~'
