@@ -28,7 +28,6 @@ func NewMap(maxX, maxY int) Map {
 		}
 	}
 	return m
-
 }
 
 func (m Map) Print() string {

@@ -25,7 +25,10 @@ func start() {
 
 	bot := models.NewBot(models.GOPHER, 0, 0)
 	gameMap := models.NewMap(80, 30)
-	gameMap.Place(models.NewField(models.BOX, 30, 10))
+	gameMap.Place(models.NewField(models.BOX, 30, 5))
+	gameMap.Place(models.NewField(models.BOX, 10, 10))
+	gameMap.Place(models.NewField(models.BOX, 40, 15))
+	gameMap.Place(models.NewField(models.BOX, 55, 20))
 	gameMap.Place(bot)
 	fmt.Println(gameMap.Print())
 
