@@ -10,7 +10,7 @@ import (
 )
 
 var gameMap models.Map
-var bot models.Bot
+var player models.Player
 
 func main() {
 	start()
@@ -23,18 +23,18 @@ func start() {
 	// do not display entered characters on the screen
 	exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
 
-	bot := models.NewBot(models.GOPHER, 0, 0)
+	player := models.NewPlayer(models.GOPHER, 0, 0)
 	gameMap := models.NewMap(80, 30)
 	gameMap.Place(models.NewField(models.BOX, 30, 5))
 	gameMap.Place(models.NewField(models.BOX, 10, 10))
 	gameMap.Place(models.NewField(models.BOX, 40, 15))
 	gameMap.Place(models.NewField(models.BOX, 55, 20))
-	gameMap.Place(bot)
+	gameMap.Place(player)
 	fmt.Println(gameMap.Print())
 
 	var engine Engine = SimpleEngine{
 		GameMap: gameMap,
-		Bot:     bot,
+		Player:  player,
 	}
 
 	var b []byte = make([]byte, 1)
@@ -56,7 +56,7 @@ type Engine interface {
 
 type SimpleEngine struct {
 	GameMap models.Map
-	Bot     *models.Bot
+	Player  *models.Player
 }
 
 func clearScreen() {
@@ -68,46 +68,46 @@ func (se SimpleEngine) Machine(text string) string {
 	switch text {
 
 	case "k":
-		if se.Bot.Y == se.GameMap.MaxY-1 {
+		if se.Player.Y == se.GameMap.MaxY-1 {
 			return "wall, cant move"
 		}
 		clearScreen()
-		se.GameMap.Place(models.NewField(models.FIELD, se.Bot.X, se.Bot.Y))
-		se.Bot.Y += 1
-		se.GameMap.Place(se.Bot)
+		se.GameMap.Place(models.NewField(models.FIELD, se.Player.X, se.Player.Y))
+		se.Player.Y += 1
+		se.GameMap.Place(se.Player)
 		fmt.Println(se.GameMap.Print())
 		return "moved up"
 
 	case "l":
-		if se.Bot.X == se.GameMap.MaxX-1 {
+		if se.Player.X == se.GameMap.MaxX-1 {
 			return "wall, cant move"
 		}
 		clearScreen()
-		se.GameMap.Place(models.NewField(models.FIELD, se.Bot.X, se.Bot.Y))
-		se.Bot.X += 1
-		se.GameMap.Place(se.Bot)
+		se.GameMap.Place(models.NewField(models.FIELD, se.Player.X, se.Player.Y))
+		se.Player.X += 1
+		se.GameMap.Place(se.Player)
 		fmt.Println(se.GameMap.Print())
 		return "moved right"
 
 	case "h":
-		if se.Bot.X == 0 {
+		if se.Player.X == 0 {
 			return "wall, cant move"
 		}
 		clearScreen()
-		se.GameMap.Place(models.NewField(models.FIELD, se.Bot.X, se.Bot.Y))
-		se.Bot.X -= 1
-		se.GameMap.Place(se.Bot)
+		se.GameMap.Place(models.NewField(models.FIELD, se.Player.X, se.Player.Y))
+		se.Player.X -= 1
+		se.GameMap.Place(se.Player)
 		fmt.Println(se.GameMap.Print())
 		return "moved left"
 
 	case "j":
-		if se.Bot.Y == 0 {
+		if se.Player.Y == 0 {
 			return "wall, cant move"
 		}
 		clearScreen()
-		se.GameMap.Place(models.NewField(models.FIELD, se.Bot.X, se.Bot.Y))
-		se.Bot.Y -= 1
-		se.GameMap.Place(se.Bot)
+		se.GameMap.Place(models.NewField(models.FIELD, se.Player.X, se.Player.Y))
+		se.Player.Y -= 1
+		se.GameMap.Place(se.Player)
 		fmt.Println(se.GameMap.Print())
 		return "moved down"
 	}

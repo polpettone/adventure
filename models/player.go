@@ -1,27 +1,27 @@
 package models
 
-type Bot struct {
+type Player struct {
 	Symbol rune
 	X      int
 	Y      int
 }
 
-func NewBot(symbol rune, x, y int) *Bot {
-	return &Bot{
+func NewPlayer(symbol rune, x, y int) *Player {
+	return &Player{
 		Symbol: symbol,
 		X:      x,
 		Y:      y,
 	}
 }
 
-func (b Bot) GetSymbol() rune {
+func (b Player) GetSymbol() rune {
 	return b.Symbol
 }
 
-func (b Bot) GetX() int {
+func (b Player) GetX() int {
 	return b.X
 }
 
-func (b Bot) GetY() int {
+func (b Player) GetY() int {
 	return b.Y
 }
