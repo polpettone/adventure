@@ -23,8 +23,8 @@ func setupShellSettings() {
 
 func initGame() Engine {
 
-	player := models.NewPlayer(models.PLAYER, 0, 0, "k", "j", "l", "h")
-	player2 := models.NewPlayer(models.PLAYER2, 79, 29, "w", "s", "d", "a")
+	player := models.NewPlayer(models.PLAYER, 0, 0, "k", "j", "l", "h", "m")
+	player2 := models.NewPlayer(models.PLAYER2, 79, 29, "w", "s", "d", "a", "x")
 
 	gameMap := models.NewMap(80, 30)
 	gameMap.Place(models.NewField(models.BOX, 30, 5))
@@ -79,6 +79,17 @@ func clearScreen() {
 
 func updatePlayer(key string, gameMap *models.Map, player *models.Player) string {
 	switch key {
+
+	case player.Action:
+		if player.X == gameMap.MaxX-1 {
+			return "cant action, there comes the wall"
+		}
+		clearScreen()
+		gameMap.Place(models.NewItem(models.PENGUIN, player.X, player.Y))
+		player.X += 1
+		gameMap.Place(player)
+		fmt.Println(gameMap.Print())
+		return "dit action and moved right"
 
 	case player.MoveUp:
 		if player.Y == gameMap.MaxY-1 {

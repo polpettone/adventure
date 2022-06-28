@@ -9,9 +9,10 @@ type Player struct {
 	MoveDown  string
 	MoveRight string
 	MoveLeft  string
+	Action    string
 }
 
-func NewPlayer(symbol rune, x, y int, u, d, r, l string) *Player {
+func NewPlayer(symbol rune, x, y int, u, d, r, l, a string) *Player {
 	return &Player{
 		Symbol:    symbol,
 		X:         x,
@@ -20,6 +21,7 @@ func NewPlayer(symbol rune, x, y int, u, d, r, l string) *Player {
 		MoveDown:  d,
 		MoveRight: r,
 		MoveLeft:  l,
+		Action:    a,
 	}
 }
 
