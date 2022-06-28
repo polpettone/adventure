@@ -64,63 +64,64 @@ type Engine interface {
 type SimpleEngine struct {
 	GameMap models.Map
 	Player  *models.Player
+	Player2 *models.Player
 }
 
 func clearScreen() {
 	fmt.Print("\033[H\033[2J")
 }
 
-func updatePlayer(key string, se SimpleEngine) string {
+func updatePlayer(key string, gameMap *models.Map, player *models.Player) string {
 	switch key {
 
-	case se.Player.MoveUp:
-		if se.Player.Y == se.GameMap.MaxY-1 {
+	case player.MoveUp:
+		if player.Y == gameMap.MaxY-1 {
 			return "wall, cant move"
 		}
 		clearScreen()
-		se.GameMap.Place(models.NewField(models.FIELD, se.Player.X, se.Player.Y))
-		se.Player.Y += 1
-		se.GameMap.Place(se.Player)
-		fmt.Println(se.GameMap.Print())
+		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
+		player.Y += 1
+		gameMap.Place(player)
+		fmt.Println(gameMap.Print())
 		return "moved up"
 
-	case se.Player.MoveRight:
-		if se.Player.X == se.GameMap.MaxX-1 {
+	case player.MoveRight:
+		if player.X == gameMap.MaxX-1 {
 			return "wall, cant move"
 		}
 		clearScreen()
-		se.GameMap.Place(models.NewField(models.FIELD, se.Player.X, se.Player.Y))
-		se.Player.X += 1
-		se.GameMap.Place(se.Player)
-		fmt.Println(se.GameMap.Print())
+		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
+		player.X += 1
+		gameMap.Place(player)
+		fmt.Println(gameMap.Print())
 		return "moved right"
 
-	case se.Player.MoveLeft:
-		if se.Player.X == 0 {
+	case player.MoveLeft:
+		if player.X == 0 {
 			return "wall, cant move"
 		}
 		clearScreen()
-		se.GameMap.Place(models.NewField(models.FIELD, se.Player.X, se.Player.Y))
-		se.Player.X -= 1
-		se.GameMap.Place(se.Player)
-		fmt.Println(se.GameMap.Print())
+		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
+		player.X -= 1
+		gameMap.Place(player)
+		fmt.Println(gameMap.Print())
 		return "moved left"
 
-	case se.Player.MoveDown:
-		if se.Player.Y == 0 {
+	case player.MoveDown:
+		if player.Y == 0 {
 			return "wall, cant move"
 		}
 		clearScreen()
-		se.GameMap.Place(models.NewField(models.FIELD, se.Player.X, se.Player.Y))
-		se.Player.Y -= 1
-		se.GameMap.Place(se.Player)
-		fmt.Println(se.GameMap.Print())
+		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
+		player.Y -= 1
+		gameMap.Place(player)
+		fmt.Println(gameMap.Print())
 		return "moved down"
 	}
 	return "nothing happend"
 }
 
 func (se SimpleEngine) Machine(key string) string {
-	updatePlayer(key, se)
+	updatePlayer(key, &se.GameMap, se.Player)
 	return "nothing happend"
 }
