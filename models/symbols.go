@@ -4,6 +4,7 @@ const GOPHER = ''
 const WATER = '~'
 const FIELD = ' '
 const BOX = ''
+const GITHUB = ''
 
 const ELEPHANT = '🐘'
 const WHALE = '🐋'
