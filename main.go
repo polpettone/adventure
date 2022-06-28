@@ -23,8 +23,8 @@ func setupShellSettings() {
 
 func initGame() Engine {
 
-	player := models.NewPlayer(models.WHALE, 0, 0, "k", "j", "l", "h")
-	player2 := models.NewPlayer(models.ELEPHANT, 79, 29, "w", "s", "d", "a")
+	player := models.NewPlayer(models.PLAYER, 0, 0, "k", "j", "l", "h")
+	player2 := models.NewPlayer(models.PLAYER2, 79, 29, "w", "s", "d", "a")
 
 	gameMap := models.NewMap(80, 30)
 	gameMap.Place(models.NewField(models.BOX, 30, 5))
