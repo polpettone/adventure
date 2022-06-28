@@ -22,7 +22,7 @@ func setupShellSettings() {
 }
 
 func initGame() Engine {
-	player := models.NewPlayer(models.GOPHER, 0, 0)
+	player := models.NewPlayer(models.GOPHER, 0, 0, "k", "j", "l", "h")
 	gameMap := models.NewMap(80, 30)
 	gameMap.Place(models.NewField(models.BOX, 30, 5))
 	gameMap.Place(models.NewField(models.BOX, 10, 10))
@@ -70,11 +70,10 @@ func clearScreen() {
 	fmt.Print("\033[H\033[2J")
 }
 
-func (se SimpleEngine) Machine(text string) string {
+func updatePlayer(key string, se SimpleEngine) string {
+	switch key {
 
-	switch text {
-
-	case "k":
+	case se.Player.MoveUp:
 		if se.Player.Y == se.GameMap.MaxY-1 {
 			return "wall, cant move"
 		}
@@ -85,7 +84,7 @@ func (se SimpleEngine) Machine(text string) string {
 		fmt.Println(se.GameMap.Print())
 		return "moved up"
 
-	case "l":
+	case se.Player.MoveRight:
 		if se.Player.X == se.GameMap.MaxX-1 {
 			return "wall, cant move"
 		}
@@ -96,7 +95,7 @@ func (se SimpleEngine) Machine(text string) string {
 		fmt.Println(se.GameMap.Print())
 		return "moved right"
 
-	case "h":
+	case se.Player.MoveLeft:
 		if se.Player.X == 0 {
 			return "wall, cant move"
 		}
@@ -107,7 +106,7 @@ func (se SimpleEngine) Machine(text string) string {
 		fmt.Println(se.GameMap.Print())
 		return "moved left"
 
-	case "j":
+	case se.Player.MoveDown:
 		if se.Player.Y == 0 {
 			return "wall, cant move"
 		}
@@ -118,6 +117,10 @@ func (se SimpleEngine) Machine(text string) string {
 		fmt.Println(se.GameMap.Print())
 		return "moved down"
 	}
+	return "nothing happend"
+}
 
+func (se SimpleEngine) Machine(key string) string {
+	updatePlayer(key, se)
 	return "nothing happend"
 }
