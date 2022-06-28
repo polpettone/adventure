@@ -5,24 +5,37 @@ type Player struct {
 	X      int
 	Y      int
 
-	MoveUp    string
-	MoveDown  string
-	MoveRight string
-	MoveLeft  string
-	Action    string
+	MoveUpKey    string
+	MoveDownKey  string
+	MoveRightKey string
+	MoveLeftKey  string
+	ActionKey    string
 }
 
 func NewPlayer(symbol rune, x, y int, u, d, r, l, a string) *Player {
 	return &Player{
-		Symbol:    symbol,
-		X:         x,
-		Y:         y,
-		MoveUp:    u,
-		MoveDown:  d,
-		MoveRight: r,
-		MoveLeft:  l,
-		Action:    a,
+		Symbol:       symbol,
+		X:            x,
+		Y:            y,
+		MoveUpKey:    u,
+		MoveDownKey:  d,
+		MoveRightKey: r,
+		MoveLeftKey:  l,
+		ActionKey:    a,
 	}
+}
+
+func (p *Player) MoveUp() {
+	p.Y += 1
+}
+func (p *Player) MoveDown() {
+	p.Y -= 1
+}
+func (p *Player) MoveLeft() {
+	p.X -= 1
+}
+func (p *Player) MoveRight() {
+	p.X += 1
 }
 
 func (b Player) GetSymbol() rune {

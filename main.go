@@ -80,7 +80,7 @@ func clearScreen() {
 func updatePlayer(key string, gameMap *models.Map, player *models.Player) string {
 	switch key {
 
-	case player.Action:
+	case player.ActionKey:
 		if player.X == gameMap.MaxX-1 {
 			return "cant action, there comes the wall"
 		}
@@ -91,46 +91,46 @@ func updatePlayer(key string, gameMap *models.Map, player *models.Player) string
 		fmt.Println(gameMap.Print())
 		return "dit action and moved right"
 
-	case player.MoveUp:
+	case player.MoveUpKey:
 		if player.Y == gameMap.MaxY-1 {
 			return "wall, cant move"
 		}
 		clearScreen()
 		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
-		player.Y += 1
+		player.MoveUp()
 		gameMap.Place(player)
 		fmt.Println(gameMap.Print())
 		return "moved up"
 
-	case player.MoveRight:
+	case player.MoveRightKey:
 		if player.X == gameMap.MaxX-1 {
 			return "wall, cant move"
 		}
 		clearScreen()
 		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
-		player.X += 1
+		player.MoveRight()
 		gameMap.Place(player)
 		fmt.Println(gameMap.Print())
 		return "moved right"
 
-	case player.MoveLeft:
+	case player.MoveLeftKey:
 		if player.X == 0 {
 			return "wall, cant move"
 		}
 		clearScreen()
 		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
-		player.X -= 1
+		player.MoveLeft()
 		gameMap.Place(player)
 		fmt.Println(gameMap.Print())
 		return "moved left"
 
-	case player.MoveDown:
+	case player.MoveDownKey:
 		if player.Y == 0 {
 			return "wall, cant move"
 		}
 		clearScreen()
 		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
-		player.Y -= 1
+		player.MoveDown()
 		gameMap.Place(player)
 		fmt.Println(gameMap.Print())
 		return "moved down"
