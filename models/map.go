@@ -9,9 +9,10 @@ type MapElement interface {
 }
 
 type Map struct {
-	Positions [][]MapPosition
-	MaxX      int
-	MaxY      int
+	Positions   [][]MapPosition
+	MaxX        int
+	MaxY        int
+	StatusLines []string
 }
 
 type MapPosition struct {
@@ -22,17 +23,26 @@ type MapPosition struct {
 
 func NewMap(maxX, maxY int) Map {
 
+	statusLines := []string{"Dummy status line one", "Dummy status line two"}
 	positions := make([][]MapPosition, maxX)
 	for n := range positions {
 		positions[n] = make([]MapPosition, maxY)
 	}
-	m := Map{Positions: positions, MaxX: maxX, MaxY: maxY}
+
+	m := Map{
+		Positions:   positions,
+		MaxX:        maxX,
+		MaxY:        maxY,
+		StatusLines: statusLines,
+	}
+
 	for x := 0; x < maxX; x++ {
 		for y := 0; y < maxY; y++ {
 			field := NewField(FIELD, x, y)
 			m.Place(field)
 		}
 	}
+
 	return m
 }
 
@@ -43,6 +53,10 @@ func (m Map) Print() string {
 			s += fmt.Sprintf(string(m.Positions[x][y].Element.GetSymbol()))
 		}
 		s += "\n"
+	}
+	s += "\n"
+	for _, l := range m.StatusLines {
+		s += fmt.Sprintf("%s \n", l)
 	}
 	return s
 }
