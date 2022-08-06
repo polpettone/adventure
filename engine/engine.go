@@ -7,7 +7,7 @@ import (
 )
 
 type Engine interface {
-	Machine(text string) string
+	Machine(text string)
 }
 
 type SimpleEngine struct {
@@ -16,10 +16,9 @@ type SimpleEngine struct {
 	Player2 *models.Player
 }
 
-func (se SimpleEngine) Machine(key string) string {
+func (se SimpleEngine) Machine(key string) {
 	updatePlayer(key, &se.GameMap, se.Player)
 	updatePlayer(key, &se.GameMap, se.Player2)
-	return "nothing happend"
 }
 
 func InitEngine() Engine {
