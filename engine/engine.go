@@ -46,65 +46,59 @@ func InitEngine() Engine {
 	return engine
 }
 
-func updatePlayer(key string, gameMap *models.Map, player *models.Player) string {
+func updatePlayer(key string, gameMap *models.Map, player *models.Player) {
 	switch key {
 
 	case player.ActionKey:
 		if player.X == gameMap.MaxX-1 {
-			return "cant action, there comes the wall"
+			return
 		}
 		clearScreen()
 		gameMap.Place(models.NewItem(models.PENGUIN, player.X, player.Y))
 		player.X += 1
 		gameMap.Place(player)
 		fmt.Println(gameMap.Print())
-		return "dit action and moved right"
 
 	case player.MoveUpKey:
 		if player.Y == gameMap.MaxY-1 {
-			return "wall, cant move"
+			return
 		}
 		clearScreen()
 		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
 		player.MoveUp()
 		gameMap.Place(player)
 		fmt.Println(gameMap.Print())
-		return "moved up"
 
 	case player.MoveRightKey:
 		if player.X == gameMap.MaxX-1 {
-			return "wall, cant move"
+			return
 		}
 		clearScreen()
 		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
 		player.MoveRight()
 		gameMap.Place(player)
 		fmt.Println(gameMap.Print())
-		return "moved right"
 
 	case player.MoveLeftKey:
 		if player.X == 0 {
-			return "wall, cant move"
+			return
 		}
 		clearScreen()
 		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
 		player.MoveLeft()
 		gameMap.Place(player)
 		fmt.Println(gameMap.Print())
-		return "moved left"
 
 	case player.MoveDownKey:
 		if player.Y == 0 {
-			return "wall, cant move"
+			return
 		}
 		clearScreen()
 		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
 		player.MoveDown()
 		gameMap.Place(player)
 		fmt.Println(gameMap.Print())
-		return "moved down"
 	}
-	return "nothing happend"
 }
 
 func clearScreen() {
