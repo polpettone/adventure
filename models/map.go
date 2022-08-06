@@ -23,7 +23,11 @@ type MapPosition struct {
 
 func NewMap(maxX, maxY int) Map {
 
-	statusLines := []string{"Dummy status line one", "Dummy status line two"}
+	statusLines := []string{
+		"Dummy status line one",
+		"Dummy status line two",
+		"Dummy status line three",
+	}
 	positions := make([][]MapPosition, maxX)
 	for n := range positions {
 		positions[n] = make([]MapPosition, maxY)
@@ -44,6 +48,18 @@ func NewMap(maxX, maxY int) Map {
 	}
 
 	return m
+}
+
+func (m Map) GetElementFromPos(x, y int) MapElement {
+	return m.Positions[x][y].Element
+}
+
+func (m Map) SetStatusLine(number int, text string) {
+	if len(m.StatusLines) <= number {
+		//TODO: logging
+		return
+	}
+	m.StatusLines[number] = text
 }
 
 func (m Map) Print() string {

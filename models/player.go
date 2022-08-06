@@ -10,6 +10,8 @@ type Player struct {
 	MoveRightKey string
 	MoveLeftKey  string
 	ActionKey    string
+
+	Items []Item
 }
 
 func NewPlayer(symbol rune, x, y int, u, d, r, l, a string) *Player {
@@ -23,6 +25,10 @@ func NewPlayer(symbol rune, x, y int, u, d, r, l, a string) *Player {
 		MoveLeftKey:  l,
 		ActionKey:    a,
 	}
+}
+
+func (p *Player) addItem(item Item) {
+	p.Items = append(p.Items, item)
 }
 
 func (p *Player) MoveUp() {
