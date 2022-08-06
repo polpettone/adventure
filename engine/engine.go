@@ -56,8 +56,6 @@ func updatePlayer(key string, gameMap *models.Map, player *models.Player) {
 		clearScreen()
 		gameMap.Place(models.NewItem(models.PENGUIN, player.X, player.Y))
 		player.X += 1
-		gameMap.Place(player)
-		fmt.Println(gameMap.Print())
 
 	case player.MoveUpKey:
 		if player.Y == gameMap.MaxY-1 {
@@ -66,8 +64,6 @@ func updatePlayer(key string, gameMap *models.Map, player *models.Player) {
 		clearScreen()
 		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
 		player.MoveUp()
-		gameMap.Place(player)
-		fmt.Println(gameMap.Print())
 
 	case player.MoveRightKey:
 		if player.X == gameMap.MaxX-1 {
@@ -76,8 +72,6 @@ func updatePlayer(key string, gameMap *models.Map, player *models.Player) {
 		clearScreen()
 		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
 		player.MoveRight()
-		gameMap.Place(player)
-		fmt.Println(gameMap.Print())
 
 	case player.MoveLeftKey:
 		if player.X == 0 {
@@ -86,8 +80,6 @@ func updatePlayer(key string, gameMap *models.Map, player *models.Player) {
 		clearScreen()
 		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
 		player.MoveLeft()
-		gameMap.Place(player)
-		fmt.Println(gameMap.Print())
 
 	case player.MoveDownKey:
 		if player.Y == 0 {
@@ -96,9 +88,11 @@ func updatePlayer(key string, gameMap *models.Map, player *models.Player) {
 		clearScreen()
 		gameMap.Place(models.NewField(models.FIELD, player.X, player.Y))
 		player.MoveDown()
-		gameMap.Place(player)
-		fmt.Println(gameMap.Print())
 	}
+
+	clearScreen()
+	gameMap.Place(player)
+	fmt.Println(gameMap.Print())
 }
 
 func clearScreen() {
