@@ -35,3 +35,15 @@ func (f Field) GetY() int {
 func (f Field) GetID() uuid.UUID {
 	return f.ID
 }
+
+func (i Field) IsDisplayed() bool {
+	return true
+}
+
+func (i Field) DisplayOn() {
+	//always on
+}
+
+func (i Field) DisplayOff() {
+	//always on
+}

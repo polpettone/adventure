@@ -3,6 +3,7 @@ package engine
 import (
 	"fmt"
 
+	"github.com/google/uuid"
 	"github.com/polpettone/adventure/models"
 )
 
@@ -15,16 +16,8 @@ type SimpleEngine struct {
 	Player1 *models.Player
 	Player2 *models.Player
 	Enemies []*models.Enemy
-}
 
-func (se SimpleEngine) Machine(key string) {
-	updatePlayer(key, se.Player1, se.GameMap)
-	updatePlayer(key, se.Player2, se.GameMap)
-
-	clearScreen()
-
-	se.GameMap.Update()
-	fmt.Println(se.GameMap.Print())
+	Elements map[uuid.UUID]*models.MapElement
 }
 
 func InitEngine() Engine {
@@ -45,6 +38,12 @@ func InitEngine() Engine {
 		enemy,
 	}
 
+	elements := map[uuid.UUID]*models.MapElement{}
+
+	for _, elem := range mapElements {
+		elements[elem.GetID()] = &elem
+	}
+
 	gameMap := models.NewMap(80, 30, mapElements)
 
 	clearScreen()
@@ -57,6 +56,16 @@ func InitEngine() Engine {
 		Enemies: enemies,
 	}
 	return engine
+}
+
+func (se SimpleEngine) Machine(key string) {
+	updatePlayer(key, se.Player1, se.GameMap)
+	updatePlayer(key, se.Player2, se.GameMap)
+
+	clearScreen()
+
+	se.GameMap.Update()
+	fmt.Println(se.GameMap.Print())
 }
 
 func updatePlayer(key string, player *models.Player, gameMap *models.Map) {
@@ -94,6 +103,8 @@ func updatePlayer(key string, player *models.Player, gameMap *models.Map) {
 	}
 
 	mapElement := gameMap.GetElementFromPos(player.X, player.Y)
+
+	mapElement.DisplayOff()
 
 	t := fmt.Sprintf("%T", mapElement)
 

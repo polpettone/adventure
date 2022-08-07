@@ -11,6 +11,10 @@ type MapElement interface {
 	GetX() int
 	GetY() int
 	GetID() uuid.UUID
+
+	IsDisplayed() bool
+	DisplayOn()
+	DisplayOff()
 }
 
 type Map struct {
