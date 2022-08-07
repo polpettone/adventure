@@ -14,6 +14,7 @@ type SimpleEngine struct {
 	GameMap *models.Map
 	Player1 *models.Player
 	Player2 *models.Player
+	Enemies []*models.Enemy
 }
 
 func (se SimpleEngine) Machine(key string) {
@@ -32,6 +33,9 @@ func InitEngine() Engine {
 	player1 := models.NewPlayer(models.PLAYER, 0, 0, "k", "j", "l", "h", "m")
 	player2 := models.NewPlayer(models.PLAYER2, 79, 29, "w", "s", "d", "a", "x")
 
+	enemy := models.NewEnemy(models.PENGUIN, 3, 3)
+	enemies := []*models.Enemy{enemy}
+
 	gameMap := models.NewMap(80, 30, *player1, *player2)
 	gameMap.Place(models.NewField(models.BOX, 30, 5))
 	gameMap.Place(models.NewField(models.BOX, 10, 10))
@@ -48,6 +52,7 @@ func InitEngine() Engine {
 		GameMap: gameMap,
 		Player1: player1,
 		Player2: player2,
+		Enemies: enemies,
 	}
 	return engine
 }

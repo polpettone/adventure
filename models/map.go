@@ -17,6 +17,7 @@ type Map struct {
 	StatusLines []string
 	Player1     Player
 	Player2     Player
+	Enemies     []Enemy
 }
 
 type MapPosition struct {
