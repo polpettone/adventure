@@ -11,22 +11,19 @@ type MapElement interface {
 }
 
 type Map struct {
+	MapElements []MapElement
 	Positions   [][]MapPosition
 	MaxX        int
 	MaxY        int
 	StatusLines []string
-	Player1     Player
-	Player2     Player
 	Enemies     []Enemy
 }
 
 type MapPosition struct {
 	Element MapElement
-	X       int
-	Y       int
 }
 
-func NewMap(maxX, maxY int, player1, player2 Player) *Map {
+func NewMap(maxX, maxY int, mapElements []MapElement) *Map {
 
 	statusLines := []string{
 		"Dummy status line one",
@@ -43,18 +40,28 @@ func NewMap(maxX, maxY int, player1, player2 Player) *Map {
 		MaxX:        maxX,
 		MaxY:        maxY,
 		StatusLines: statusLines,
-		Player1:     player1,
-		Player2:     player2,
+		MapElements: mapElements,
 	}
 
-	for x := 0; x < maxX; x++ {
-		for y := 0; y < maxY; y++ {
-			field := NewField(FIELD, x, y)
-			m.Place(field)
-		}
-	}
+	m.Clear()
 
 	return m
+}
+
+func (m *Map) Clear() {
+	for x := 0; x < m.MaxX; x++ {
+		for y := 0; y < m.MaxY; y++ {
+			field := NewField(FIELD, x, y)
+			m.place(field)
+		}
+	}
+}
+
+func (m *Map) Update() {
+	m.Clear()
+	for _, elem := range m.MapElements {
+		m.place(elem)
+	}
 }
 
 func (m *Map) GetElementFromPos(x, y int) MapElement {
@@ -84,20 +91,8 @@ func (m *Map) Print() string {
 	return s
 }
 
-func (m *Map) Place(elem MapElement) MapElement {
+func (m *Map) place(elem MapElement) MapElement {
 	prevElem := m.Positions[elem.GetX()][elem.GetY()].Element
 	m.Positions[elem.GetX()][elem.GetY()].Element = elem
 	return prevElem
-}
-
-func (m *Map) UpdatePlayer1(player Player) {
-	m.Place(NewField(FIELD, m.Player1.X, m.Player1.Y))
-	m.Place(player)
-	m.Player1 = player
-}
-
-func (m *Map) UpdatePlayer2(player Player) {
-	m.Place(NewField(FIELD, m.Player2.X, m.Player2.Y))
-	m.Place(player)
-	m.Player2 = player
 }

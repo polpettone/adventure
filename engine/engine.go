@@ -22,9 +22,8 @@ func (se SimpleEngine) Machine(key string) {
 	updatePlayer(key, se.Player2, se.GameMap)
 
 	clearScreen()
-	se.GameMap.UpdatePlayer1(*se.Player1)
-	se.GameMap.UpdatePlayer2(*se.Player2)
 
+	se.GameMap.Update()
 	fmt.Println(se.GameMap.Print())
 }
 
@@ -36,14 +35,17 @@ func InitEngine() Engine {
 	enemy := models.NewEnemy(models.PENGUIN, 3, 3)
 	enemies := []*models.Enemy{enemy}
 
-	gameMap := models.NewMap(80, 30, *player1, *player2)
-	gameMap.Place(models.NewField(models.BOX, 30, 5))
-	gameMap.Place(models.NewField(models.BOX, 10, 10))
-	gameMap.Place(models.NewField(models.BOX, 40, 15))
-	gameMap.Place(models.NewField(models.BOX, 55, 20))
+	mapElements := []models.MapElement{
+		models.NewField(models.BOX, 30, 5),
+		models.NewField(models.BOX, 10, 10),
+		models.NewField(models.BOX, 40, 15),
+		models.NewField(models.BOX, 55, 20),
+		player1,
+		player2,
+		enemy,
+	}
 
-	gameMap.Place(player1)
-	gameMap.Place(player2)
+	gameMap := models.NewMap(80, 30, mapElements)
 
 	clearScreen()
 	fmt.Println(gameMap.Print())
@@ -64,7 +66,6 @@ func updatePlayer(key string, player *models.Player, gameMap *models.Map) {
 		if player.X == gameMap.MaxX-1 {
 			return
 		}
-		gameMap.Place(models.NewItem(models.PENGUIN, player.X, player.Y))
 		player.X += 1
 
 	case player.MoveUpKey:
