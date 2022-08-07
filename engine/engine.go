@@ -36,10 +36,10 @@ func InitEngine() Engine {
 	enemies := []*models.Enemy{enemy}
 
 	mapElements := []models.MapElement{
-		models.NewField(models.BOX, 30, 5),
-		models.NewField(models.BOX, 10, 10),
-		models.NewField(models.BOX, 40, 15),
-		models.NewField(models.BOX, 55, 20),
+		models.NewItem(models.BOX, 30, 5),
+		models.NewItem(models.BOX, 10, 10),
+		models.NewItem(models.BOX, 40, 15),
+		models.NewItem(models.BOX, 55, 20),
 		player1,
 		player2,
 		enemy,
@@ -92,6 +92,13 @@ func updatePlayer(key string, player *models.Player, gameMap *models.Map) {
 		}
 		player.MoveDown()
 	}
+
+	mapElement := gameMap.GetElementFromPos(player.X, player.Y)
+
+	t := fmt.Sprintf("%T", mapElement)
+
+	gameMap.SetStatusLine(0, string(mapElement.GetSymbol())+" "+t)
+
 }
 
 func clearScreen() {

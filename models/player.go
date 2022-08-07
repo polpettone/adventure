@@ -1,6 +1,11 @@
 package models
 
+import (
+	"github.com/google/uuid"
+)
+
 type Player struct {
+	ID     uuid.UUID
 	Symbol rune
 	X      int
 	Y      int
@@ -16,6 +21,7 @@ type Player struct {
 
 func NewPlayer(symbol rune, x, y int, u, d, r, l, a string) *Player {
 	return &Player{
+		ID:           uuid.New(),
 		Symbol:       symbol,
 		X:            x,
 		Y:            y,
@@ -54,4 +60,8 @@ func (b Player) GetX() int {
 
 func (b Player) GetY() int {
 	return b.Y
+}
+
+func (p Player) GetID() uuid.UUID {
+	return p.ID
 }

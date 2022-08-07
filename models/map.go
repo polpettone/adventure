@@ -2,12 +2,15 @@ package models
 
 import (
 	"fmt"
+
+	"github.com/google/uuid"
 )
 
 type MapElement interface {
 	GetSymbol() rune
 	GetX() int
 	GetY() int
+	GetID() uuid.UUID
 }
 
 type Map struct {

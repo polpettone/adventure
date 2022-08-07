@@ -1,6 +1,11 @@
 package models
 
+import (
+	"github.com/google/uuid"
+)
+
 type Enemy struct {
+	ID     uuid.UUID
 	Symbol rune
 	X      int
 	Y      int
@@ -8,6 +13,7 @@ type Enemy struct {
 
 func NewEnemy(symbol rune, x, y int) *Enemy {
 	return &Enemy{
+		ID:     uuid.New(),
 		Symbol: symbol,
 		X:      x,
 		Y:      y,
@@ -37,4 +43,8 @@ func (e Enemy) GetX() int {
 
 func (e Enemy) GetY() int {
 	return e.Y
+}
+
+func (e Enemy) GetID() uuid.UUID {
+	return e.ID
 }
