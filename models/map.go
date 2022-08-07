@@ -1,6 +1,8 @@
 package models
 
-import "fmt"
+import (
+	"fmt"
+)
 
 type MapElement interface {
 	GetSymbol() rune
@@ -13,6 +15,8 @@ type Map struct {
 	MaxX        int
 	MaxY        int
 	StatusLines []string
+	Player1     Player
+	Player2     Player
 }
 
 type MapPosition struct {
@@ -21,7 +25,7 @@ type MapPosition struct {
 	Y       int
 }
 
-func NewMap(maxX, maxY int) Map {
+func NewMap(maxX, maxY int, player1, player2 Player) *Map {
 
 	statusLines := []string{
 		"Dummy status line one",
@@ -33,11 +37,13 @@ func NewMap(maxX, maxY int) Map {
 		positions[n] = make([]MapPosition, maxY)
 	}
 
-	m := Map{
+	m := &Map{
 		Positions:   positions,
 		MaxX:        maxX,
 		MaxY:        maxY,
 		StatusLines: statusLines,
+		Player1:     player1,
+		Player2:     player2,
 	}
 
 	for x := 0; x < maxX; x++ {
@@ -50,11 +56,11 @@ func NewMap(maxX, maxY int) Map {
 	return m
 }
 
-func (m Map) GetElementFromPos(x, y int) MapElement {
+func (m *Map) GetElementFromPos(x, y int) MapElement {
 	return m.Positions[x][y].Element
 }
 
-func (m Map) SetStatusLine(number int, text string) {
+func (m *Map) SetStatusLine(number int, text string) {
 	if len(m.StatusLines) <= number {
 		//TODO: logging
 		return
@@ -62,7 +68,7 @@ func (m Map) SetStatusLine(number int, text string) {
 	m.StatusLines[number] = text
 }
 
-func (m Map) Print() string {
+func (m *Map) Print() string {
 	var s string
 	for y := m.MaxY - 1; y >= 0; y-- {
 		for x := 0; x < m.MaxX; x++ {
@@ -77,8 +83,20 @@ func (m Map) Print() string {
 	return s
 }
 
-func (m Map) Place(elem MapElement) MapElement {
+func (m *Map) Place(elem MapElement) MapElement {
 	prevElem := m.Positions[elem.GetX()][elem.GetY()].Element
 	m.Positions[elem.GetX()][elem.GetY()].Element = elem
 	return prevElem
+}
+
+func (m *Map) UpdatePlayer1(player Player) {
+	m.Place(NewField(FIELD, m.Player1.X, m.Player1.Y))
+	m.Place(player)
+	m.Player1 = player
+}
+
+func (m *Map) UpdatePlayer2(player Player) {
+	m.Place(NewField(FIELD, m.Player2.X, m.Player2.Y))
+	m.Place(player)
+	m.Player2 = player
 }
