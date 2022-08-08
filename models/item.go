@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/google/uuid"
+	"github.com/polpettone/adventure/logging"
 )
 
 type Item struct {
@@ -48,4 +49,5 @@ func (i Item) DisplayOn() {
 
 func (i Item) DisplayOff() {
 	i.Displayed = false
+	logging.Log.DebugLog.Printf("Item %s display off", i.GetID().String())
 }

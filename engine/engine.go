@@ -2,8 +2,11 @@ package engine
 
 import (
 	"fmt"
+	"reflect"
+	"text/tabwriter"
 
 	"github.com/google/uuid"
+	"github.com/polpettone/adventure/logging"
 	"github.com/polpettone/adventure/models"
 )
 
@@ -58,32 +61,49 @@ func InitEngine() Engine {
 }
 
 func (se SimpleEngine) Machine(key string) {
-	updatePlayer(key, se.Player1, se.GameMap)
-	updatePlayer(key, se.Player2, se.GameMap)
+	updatePlayer(key, se.Player1, se)
+	updatePlayer(key, se.Player2, se)
 
 	clearScreen()
 
 	se.GameMap.Update(se.Elements)
 	fmt.Println(se.GameMap.Print())
+
+	logElementStates(se.Elements)
 }
 
-func updatePlayer(key string, player *models.Player, gameMap *models.Map) {
+func logElementStates(elements map[uuid.UUID]models.Element) {
+
+	tw := tabwriter.NewWriter(logging.Log.DebugLog.Writer(), 1, 4, 1, '\t', 1)
+
+	for _, elem := range elements {
+		fmt.Fprint(tw, fmt.Sprintf(
+			"%s \t%s \t %t \n",
+			reflect.TypeOf(elem).String(),
+			elem.GetID().String(),
+			elem.IsDisplayed()),
+		)
+	}
+	tw.Flush()
+}
+
+func updatePlayer(key string, player *models.Player, se SimpleEngine) {
 	switch key {
 
 	case player.ActionKey:
-		if player.X == gameMap.MaxX-1 {
+		if player.X == se.GameMap.MaxX-1 {
 			return
 		}
 		player.X += 1
 
 	case player.MoveUpKey:
-		if player.Y == gameMap.MaxY-1 {
+		if player.Y == se.GameMap.MaxY-1 {
 			return
 		}
 		player.MoveUp()
 
 	case player.MoveRightKey:
-		if player.X == gameMap.MaxX-1 {
+		if player.X == se.GameMap.MaxX-1 {
 			return
 		}
 		player.MoveRight()
@@ -101,13 +121,13 @@ func updatePlayer(key string, player *models.Player, gameMap *models.Map) {
 		player.MoveDown()
 	}
 
-	mapElement := gameMap.GetElementFromPos(player.X, player.Y)
+	mapElement := se.GameMap.GetElementFromPos(player.X, player.Y)
 
 	mapElement.DisplayOff()
 
 	t := fmt.Sprintf("%T", mapElement)
 
-	gameMap.SetStatusLine(0, string(mapElement.GetSymbol())+" "+t)
+	se.GameMap.SetStatusLine(0, string(mapElement.GetSymbol())+" "+t)
 
 }
 
