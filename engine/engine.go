@@ -15,7 +15,6 @@ type SimpleEngine struct {
 	GameMap *models.Map
 	Player1 *models.Player
 	Player2 *models.Player
-	Enemies []*models.Enemy
 
 	Elements map[uuid.UUID]models.Element
 }
@@ -26,7 +25,6 @@ func InitEngine() Engine {
 	player2 := models.NewPlayer(models.PLAYER2, 79, 29, "w", "s", "d", "a", "x")
 
 	enemy := models.NewEnemy(models.PENGUIN, 3, 3)
-	enemies := []*models.Enemy{enemy}
 
 	mapElements := []models.Element{
 		models.NewItem(models.BOX, 30, 5),
@@ -54,7 +52,6 @@ func InitEngine() Engine {
 		GameMap:  gameMap,
 		Player1:  player1,
 		Player2:  player2,
-		Enemies:  enemies,
 		Elements: elements,
 	}
 	return engine
