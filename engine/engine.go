@@ -73,17 +73,19 @@ func (se SimpleEngine) Machine(key string) {
 }
 
 func logElementStates(elements map[uuid.UUID]models.Element) {
-
-	tw := tabwriter.NewWriter(logging.Log.DebugLog.Writer(), 1, 4, 1, '\t', 1)
-
 	for _, elem := range elements {
-		fmt.Fprint(tw, fmt.Sprintf(
-			"%s \t%s \t %t \n",
-			reflect.TypeOf(elem).String(),
-			elem.GetID().String(),
-			elem.IsDisplayed()),
-		)
+		logElement(elem)
 	}
+}
+
+func logElement(elem models.Element) {
+	tw := tabwriter.NewWriter(logging.Log.DebugLog.Writer(), 1, 4, 1, '\t', 1)
+	fmt.Fprint(tw, fmt.Sprintf(
+		"%s \t%s \t %t \n",
+		reflect.TypeOf(elem).String(),
+		elem.GetID().String(),
+		elem.IsDisplayed()),
+	)
 	tw.Flush()
 }
 
@@ -121,14 +123,19 @@ func updatePlayer(key string, player *models.Player, se SimpleEngine) {
 		player.MoveDown()
 	}
 
-	mapElement := se.GameMap.GetElementFromPos(player.X, player.Y)
+	element := se.GameMap.GetElementFromPos(player.X, player.Y)
+	logElement(element)
 
-	mapElement.DisplayOff()
-
-	t := fmt.Sprintf("%T", mapElement)
-
-	se.GameMap.SetStatusLine(0, string(mapElement.GetSymbol())+" "+t)
-
+	if element != nil {
+		elem := se.Elements[element.GetID()]
+		if elem != nil {
+			logElement(elem)
+			elem.DisplayOff()
+			logElement(elem)
+		}
+		t := fmt.Sprintf("%T", element)
+		se.GameMap.SetStatusLine(0, string(element.GetSymbol())+" "+t)
+	}
 }
 
 func clearScreen() {
