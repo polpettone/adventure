@@ -17,7 +17,7 @@ type SimpleEngine struct {
 	Player2 *models.Player
 	Enemies []*models.Enemy
 
-	Elements map[uuid.UUID]*models.MapElement
+	Elements map[uuid.UUID]models.Element
 }
 
 func InitEngine() Engine {
@@ -28,7 +28,7 @@ func InitEngine() Engine {
 	enemy := models.NewEnemy(models.PENGUIN, 3, 3)
 	enemies := []*models.Enemy{enemy}
 
-	mapElements := []models.MapElement{
+	mapElements := []models.Element{
 		models.NewItem(models.BOX, 30, 5),
 		models.NewItem(models.BOX, 10, 10),
 		models.NewItem(models.BOX, 40, 15),
@@ -38,22 +38,24 @@ func InitEngine() Engine {
 		enemy,
 	}
 
-	elements := map[uuid.UUID]*models.MapElement{}
+	elements := map[uuid.UUID]models.Element{}
 
 	for _, elem := range mapElements {
-		elements[elem.GetID()] = &elem
+		elements[elem.GetID()] = elem
 	}
 
-	gameMap := models.NewMap(80, 30, mapElements)
+	gameMap := models.NewMap(80, 30, elements)
+	gameMap.Update(elements)
 
 	clearScreen()
 	fmt.Println(gameMap.Print())
 
 	var engine Engine = SimpleEngine{
-		GameMap: gameMap,
-		Player1: player1,
-		Player2: player2,
-		Enemies: enemies,
+		GameMap:  gameMap,
+		Player1:  player1,
+		Player2:  player2,
+		Enemies:  enemies,
+		Elements: elements,
 	}
 	return engine
 }
@@ -64,7 +66,7 @@ func (se SimpleEngine) Machine(key string) {
 
 	clearScreen()
 
-	se.GameMap.Update()
+	se.GameMap.Update(se.Elements)
 	fmt.Println(se.GameMap.Print())
 }
 

@@ -6,48 +6,35 @@ import (
 	"github.com/google/uuid"
 )
 
-type MapElement interface {
-	GetSymbol() rune
-	GetX() int
-	GetY() int
-	GetID() uuid.UUID
-
-	IsDisplayed() bool
-	DisplayOn()
-	DisplayOff()
-}
-
 type Map struct {
-	MapElements []MapElement
-	Positions   [][]MapPosition
 	MaxX        int
 	MaxY        int
 	StatusLines []string
-	Enemies     []Enemy
+
+	Elements map[uuid.UUID]Element
+
+	Positions [][]Element
 }
 
-type MapPosition struct {
-	Element MapElement
-}
-
-func NewMap(maxX, maxY int, mapElements []MapElement) *Map {
+func NewMap(maxX, maxY int, elements map[uuid.UUID]Element) *Map {
 
 	statusLines := []string{
 		"Dummy status line one",
 		"Dummy status line two",
 		"Dummy status line three",
 	}
-	positions := make([][]MapPosition, maxX)
+
+	positions := make([][]Element, maxX)
 	for n := range positions {
-		positions[n] = make([]MapPosition, maxY)
+		positions[n] = make([]Element, maxY)
 	}
 
 	m := &Map{
-		Positions:   positions,
 		MaxX:        maxX,
 		MaxY:        maxY,
 		StatusLines: statusLines,
-		MapElements: mapElements,
+		Elements:    elements,
+		Positions:   positions,
 	}
 
 	m.Clear()
@@ -64,15 +51,21 @@ func (m *Map) Clear() {
 	}
 }
 
-func (m *Map) Update() {
+func (m *Map) place(elem Element) Element {
+	prevElem := m.Positions[elem.GetX()][elem.GetY()]
+	m.Positions[elem.GetX()][elem.GetY()] = elem
+	return prevElem
+}
+
+func (m *Map) Update(elements map[uuid.UUID]Element) {
 	m.Clear()
-	for _, elem := range m.MapElements {
+	for _, elem := range elements {
 		m.place(elem)
 	}
 }
 
-func (m *Map) GetElementFromPos(x, y int) MapElement {
-	return m.Positions[x][y].Element
+func (m *Map) GetElementFromPos(x, y int) Element {
+	return m.Positions[x][y]
 }
 
 func (m *Map) SetStatusLine(number int, text string) {
@@ -87,7 +80,7 @@ func (m *Map) Print() string {
 	var s string
 	for y := m.MaxY - 1; y >= 0; y-- {
 		for x := 0; x < m.MaxX; x++ {
-			s += fmt.Sprintf(string(m.Positions[x][y].Element.GetSymbol()))
+			s += fmt.Sprintf(string(m.Positions[x][y].GetSymbol()))
 		}
 		s += "\n"
 	}
@@ -96,10 +89,4 @@ func (m *Map) Print() string {
 		s += fmt.Sprintf("%s \n", l)
 	}
 	return s
-}
-
-func (m *Map) place(elem MapElement) MapElement {
-	prevElem := m.Positions[elem.GetX()][elem.GetY()].Element
-	m.Positions[elem.GetX()][elem.GetY()].Element = elem
-	return prevElem
 }
