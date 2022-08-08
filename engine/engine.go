@@ -19,7 +19,13 @@ type SimpleEngine struct {
 	Player1 *models.Player
 	Player2 *models.Player
 
-	Elements map[uuid.UUID]models.Element
+	Items   map[uuid.UUID]*models.Item
+	Enemies map[uuid.UUID]*models.Enemy
+}
+
+func (se SimpleEngine) GetElements() []models.Element {
+	return buildElementsForUpdate(se.Items, se.Enemies, *se.Player1, *se.Player2)
+
 }
 
 func InitEngine() Engine {
@@ -28,22 +34,21 @@ func InitEngine() Engine {
 	player2 := models.NewPlayer(models.PLAYER2, 79, 29, "w", "s", "d", "a", "x")
 
 	enemy := models.NewEnemy(models.PENGUIN, 3, 3)
-
-	mapElements := []models.Element{
+	enemyMap := map[uuid.UUID]*models.Enemy{}
+	enemyMap[enemy.ID] = enemy
+	items := []*models.Item{
 		models.NewItem(models.BOX, 30, 5),
 		models.NewItem(models.BOX, 10, 10),
 		models.NewItem(models.BOX, 40, 15),
 		models.NewItem(models.BOX, 55, 20),
-		player1,
-		player2,
-		enemy,
 	}
 
-	elements := map[uuid.UUID]models.Element{}
-
-	for _, elem := range mapElements {
-		elements[elem.GetID()] = elem
+	itemsMap := map[uuid.UUID]*models.Item{}
+	for _, item := range items {
+		itemsMap[item.GetID()] = item
 	}
+
+	elements := buildElementsForUpdate(itemsMap, enemyMap, *player1, *player2)
 
 	gameMap := models.NewMap(80, 30, elements)
 	gameMap.Update(elements)
@@ -52,12 +57,35 @@ func InitEngine() Engine {
 	fmt.Println(gameMap.Print())
 
 	var engine Engine = SimpleEngine{
-		GameMap:  gameMap,
-		Player1:  player1,
-		Player2:  player2,
-		Elements: elements,
+		GameMap: gameMap,
+		Player1: player1,
+		Player2: player2,
+		Items:   itemsMap,
 	}
 	return engine
+}
+
+func buildElementsForUpdate(
+	items map[uuid.UUID]*models.Item,
+	enemies map[uuid.UUID]*models.Enemy,
+	player1 models.Player,
+	player2 models.Player,
+) []models.Element {
+
+	elements := []models.Element{}
+
+	for _, i := range items {
+		elements = append(elements, i)
+	}
+
+	for _, e := range enemies {
+		elements = append(elements, e)
+	}
+
+	elements = append(elements, player1)
+	elements = append(elements, player2)
+
+	return elements
 }
 
 func (se SimpleEngine) Machine(key string) {
@@ -66,13 +94,13 @@ func (se SimpleEngine) Machine(key string) {
 
 	clearScreen()
 
-	se.GameMap.Update(se.Elements)
+	se.GameMap.Update(se.GetElements())
 	fmt.Println(se.GameMap.Print())
 
-	logElementStates(se.Elements)
+	logElementStates(se.GetElements())
 }
 
-func logElementStates(elements map[uuid.UUID]models.Element) {
+func logElementStates(elements []models.Element) {
 	for _, elem := range elements {
 		logElement(elem)
 	}
@@ -125,17 +153,6 @@ func updatePlayer(key string, player *models.Player, se SimpleEngine) {
 
 	element := se.GameMap.GetElementFromPos(player.X, player.Y)
 	logElement(element)
-
-	if element != nil {
-		elem := se.Elements[element.GetID()]
-		if elem != nil {
-			logElement(elem)
-			elem.DisplayOff()
-			logElement(elem)
-		}
-		t := fmt.Sprintf("%T", element)
-		se.GameMap.SetStatusLine(0, string(element.GetSymbol())+" "+t)
-	}
 }
 
 func clearScreen() {

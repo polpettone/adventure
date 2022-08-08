@@ -2,8 +2,6 @@ package models
 
 import (
 	"fmt"
-
-	"github.com/google/uuid"
 )
 
 type Map struct {
@@ -11,12 +9,11 @@ type Map struct {
 	MaxY        int
 	StatusLines []string
 
-	Elements map[uuid.UUID]Element
-
+	Elements  []Element
 	Positions [][]Element
 }
 
-func NewMap(maxX, maxY int, elements map[uuid.UUID]Element) *Map {
+func NewMap(maxX, maxY int, elements []Element) *Map {
 
 	statusLines := []string{
 		"Dummy status line one",
@@ -57,7 +54,7 @@ func (m *Map) place(elem Element) Element {
 	return prevElem
 }
 
-func (m *Map) Update(elements map[uuid.UUID]Element) {
+func (m *Map) Update(elements []Element) {
 	m.Clear()
 	for _, elem := range elements {
 		m.place(elem)
