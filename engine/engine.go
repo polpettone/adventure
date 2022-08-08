@@ -36,6 +36,7 @@ func InitEngine() Engine {
 	enemy := models.NewEnemy(models.PENGUIN, 3, 3)
 	enemyMap := map[uuid.UUID]*models.Enemy{}
 	enemyMap[enemy.ID] = enemy
+
 	items := []*models.Item{
 		models.NewItem(models.BOX, 30, 5),
 		models.NewItem(models.BOX, 10, 10),
@@ -65,29 +66,6 @@ func InitEngine() Engine {
 	return engine
 }
 
-func buildElementsForUpdate(
-	items map[uuid.UUID]*models.Item,
-	enemies map[uuid.UUID]*models.Enemy,
-	player1 models.Player,
-	player2 models.Player,
-) []models.Element {
-
-	elements := []models.Element{}
-
-	for _, i := range items {
-		elements = append(elements, i)
-	}
-
-	for _, e := range enemies {
-		elements = append(elements, e)
-	}
-
-	elements = append(elements, player1)
-	elements = append(elements, player2)
-
-	return elements
-}
-
 func (se SimpleEngine) Machine(key string) {
 	updatePlayer(key, se.Player1, se)
 	updatePlayer(key, se.Player2, se)
@@ -98,23 +76,6 @@ func (se SimpleEngine) Machine(key string) {
 	fmt.Println(se.GameMap.Print())
 
 	logElementStates(se.GetElements())
-}
-
-func logElementStates(elements []models.Element) {
-	for _, elem := range elements {
-		logElement(elem)
-	}
-}
-
-func logElement(elem models.Element) {
-	tw := tabwriter.NewWriter(logging.Log.DebugLog.Writer(), 1, 4, 1, '\t', 1)
-	fmt.Fprint(tw, fmt.Sprintf(
-		"%s \t%s \t %t \n",
-		reflect.TypeOf(elem).String(),
-		elem.GetID().String(),
-		elem.IsDisplayed()),
-	)
-	tw.Flush()
 }
 
 func updatePlayer(key string, player *models.Player, se SimpleEngine) {
@@ -152,9 +113,60 @@ func updatePlayer(key string, player *models.Player, se SimpleEngine) {
 	}
 
 	element := se.GameMap.GetElementFromPos(player.X, player.Y)
+
+	switch element.(type) {
+
+	case *models.Item:
+		logging.Log.DebugLog.Println("Item found")
+		item := se.Items[element.GetID()]
+		if item != nil {
+			item.DisplayOff()
+		}
+	}
+
 	logElement(element)
 }
 
 func clearScreen() {
 	fmt.Print("\033[H\033[2J")
+}
+
+func logElementStates(elements []models.Element) {
+	for _, elem := range elements {
+		logElement(elem)
+	}
+}
+
+func logElement(elem models.Element) {
+	tw := tabwriter.NewWriter(logging.Log.DebugLog.Writer(), 1, 4, 1, '\t', 1)
+	fmt.Fprint(tw, fmt.Sprintf(
+		"%s \t%s \t %t \n",
+		reflect.TypeOf(elem).String(),
+		elem.GetID().String(),
+		elem.IsDisplayed()),
+	)
+	tw.Flush()
+}
+
+func buildElementsForUpdate(
+	items map[uuid.UUID]*models.Item,
+	enemies map[uuid.UUID]*models.Enemy,
+	player1 models.Player,
+	player2 models.Player,
+) []models.Element {
+
+	elements := []models.Element{}
+
+	for _, i := range items {
+		elements = append(elements, i)
+	}
+
+	for _, e := range enemies {
+		elements = append(elements, e)
+	}
+
+	elements = append(elements, player1)
+	elements = append(elements, player2)
+
+	return elements
 }

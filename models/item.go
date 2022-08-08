@@ -39,15 +39,15 @@ func (i Item) GetID() uuid.UUID {
 	return i.ID
 }
 
-func (i Item) IsDisplayed() bool {
+func (i *Item) IsDisplayed() bool {
 	return i.Displayed
 }
 
-func (i Item) DisplayOn() {
+func (i *Item) DisplayOn() {
 	i.Displayed = true
 }
 
-func (i Item) DisplayOff() {
+func (i *Item) DisplayOff() {
 	i.Displayed = false
 	logging.Log.DebugLog.Printf("Item %s display off", i.GetID().String())
 }
