@@ -54,6 +54,22 @@ func InitEngine() Engine {
 	gameMap := models.NewMap(80, 30, elements)
 	gameMap.Update(elements)
 
+	gameMap.SetStatusLine(
+		2,
+		fmt.Sprintf("%s %s",
+			string(player1.GetSymbol()),
+			"k j l h m",
+		),
+	)
+
+	gameMap.SetStatusLine(
+		3,
+		fmt.Sprintf("%s %s",
+			string(player2.GetSymbol()),
+			"w s d a x",
+		),
+	)
+
 	clearScreen()
 	fmt.Println(gameMap.Print())
 

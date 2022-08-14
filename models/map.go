@@ -16,9 +16,10 @@ type Map struct {
 func NewMap(maxX, maxY int, elements []Element) *Map {
 
 	statusLines := []string{
-		"Dummy status line one",
-		"Dummy status line two",
-		"Dummy status line three",
+		"Dummy status line 1",
+		"Dummy status line 2",
+		"Dummy status line 3",
+		"Dummy status line 4",
 	}
 
 	positions := make([][]Element, maxX)
