@@ -36,7 +36,7 @@ func NewPlayer(symbol rune, x, y int, u, d, r, l, a string) *Player {
 	}
 }
 
-func (p *Player) addItem(item Item) {
+func (p *Player) AddItem(item Item) {
 	p.Items = append(p.Items, item)
 }
 

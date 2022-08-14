@@ -73,6 +73,10 @@ func (se SimpleEngine) Machine(key string) {
 	clearScreen()
 
 	se.GameMap.Update(se.GetElements())
+
+	se.GameMap.SetStatusLine(0, fmt.Sprint(len(se.Player1.Items)))
+	se.GameMap.SetStatusLine(1, fmt.Sprint(len(se.Player2.Items)))
+
 	fmt.Println(se.GameMap.Print())
 
 	logElementStates(se.GetElements())
@@ -121,10 +125,14 @@ func updatePlayer(key string, player *models.Player, se SimpleEngine) {
 		item := se.Items[element.GetID()]
 		if item != nil {
 			item.DisplayOff()
+			logging.Log.DebugLog.Println("Item found is not null")
+			player.AddItem(*item)
+			logging.Log.DebugLog.Println(player.Items)
 		}
 	}
 
-	logElement(element)
+	logElements(element)
+
 }
 
 func clearScreen() {
@@ -133,11 +141,12 @@ func clearScreen() {
 
 func logElementStates(elements []models.Element) {
 	for _, elem := range elements {
-		logElement(elem)
+		logElements(elem)
 	}
+	logging.Log.DebugLog.Println("-------------------------------------")
 }
 
-func logElement(elem models.Element) {
+func logElements(elem models.Element) {
 	tw := tabwriter.NewWriter(logging.Log.DebugLog.Writer(), 1, 4, 1, '\t', 1)
 	fmt.Fprint(tw, fmt.Sprintf(
 		"%s \t%s \t %t \n",
