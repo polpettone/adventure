@@ -74,8 +74,23 @@ func (se SimpleEngine) Machine(key string) {
 
 	se.GameMap.Update(se.GetElements())
 
-	se.GameMap.SetStatusLine(0, fmt.Sprint(len(se.Player1.Items)))
-	se.GameMap.SetStatusLine(1, fmt.Sprint(len(se.Player2.Items)))
+	se.GameMap.SetStatusLine(
+		0,
+		fmt.Sprintf("%s %d %s",
+			string(se.Player1.GetSymbol()),
+			len(se.Player1.Items),
+			string(models.BOX),
+		),
+	)
+
+	se.GameMap.SetStatusLine(
+		1,
+		fmt.Sprintf("%s %d %s",
+			string(se.Player2.GetSymbol()),
+			len(se.Player2.Items),
+			string(models.BOX),
+		),
+	)
 
 	fmt.Println(se.GameMap.Print())
 
