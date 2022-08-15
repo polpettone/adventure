@@ -152,11 +152,10 @@ func updatePlayer(key string, player *models.Player, se SimpleEngine) {
 	switch element.(type) {
 
 	case *models.Item:
-		logging.Log.DebugLog.Println("Item found")
 		item := se.Items[element.GetID()]
 		if item != nil {
-			item.DisplayOff()
-			logging.Log.DebugLog.Println("Item found is not null")
+			delete(se.Items, item.GetID())
+			logging.Log.DebugLog.Printf("Item %s deleted", item.GetID())
 			player.AddItem(*item)
 			logging.Log.DebugLog.Println(player.Items)
 		}
