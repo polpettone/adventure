@@ -49,12 +49,6 @@ func (m *Map) Clear() {
 	}
 }
 
-func (m *Map) place(elem Element) Element {
-	prevElem := m.Positions[elem.GetX()][elem.GetY()]
-	m.Positions[elem.GetX()][elem.GetY()] = elem
-	return prevElem
-}
-
 func (m *Map) Update(elements []Element) {
 	m.Clear()
 	for _, elem := range elements {
@@ -94,4 +88,10 @@ func (m *Map) Print() string {
 		s += fmt.Sprintf("%s \n", l)
 	}
 	return s
+}
+
+func (m *Map) place(elem Element) Element {
+	prevElem := m.Positions[elem.GetX()][elem.GetY()]
+	m.Positions[elem.GetX()][elem.GetY()] = elem
+	return prevElem
 }

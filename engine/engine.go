@@ -73,11 +73,14 @@ func InitEngine() Engine {
 	clearScreen()
 	fmt.Println(gameMap.Print())
 
+	logElementStates(elements)
+
 	var engine Engine = SimpleEngine{
 		GameMap: gameMap,
 		Player1: player1,
 		Player2: player2,
 		Items:   itemsMap,
+		Enemies: enemyMap,
 	}
 	return engine
 }
