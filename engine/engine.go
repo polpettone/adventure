@@ -93,31 +93,25 @@ func (se SimpleEngine) Machine(key string) {
 
 	se.GameMap.Update(se.GetElements())
 
-	se.GameMap.SetStatusLine(
-		0,
-		fmt.Sprintf("%s %d %s %d %s",
-			string(se.Player1.GetSymbol()),
-			se.Player1.LifeCount,
-			"L",
-			len(se.Player1.Items),
-			string(models.BOX),
-		),
-	)
-
-	se.GameMap.SetStatusLine(
-		1,
-		fmt.Sprintf("%s %d %s %d %s",
-			string(se.Player2.GetSymbol()),
-			se.Player2.LifeCount,
-			"L",
-			len(se.Player2.Items),
-			string(models.BOX),
-		),
-	)
+	se.statusLineForPlayer(*se.Player1, 0)
+	se.statusLineForPlayer(*se.Player2, 1)
 
 	fmt.Println(se.GameMap.Print())
 
 	logElementStates(se.GetElements())
+}
+
+func (se SimpleEngine) statusLineForPlayer(player models.Player, statusLineIndex int) {
+	se.GameMap.SetStatusLine(
+		statusLineIndex,
+		fmt.Sprintf("%s %d %s %d %s",
+			string(player.GetSymbol()),
+			player.LifeCount,
+			"L",
+			len(player.Items),
+			string(models.BOX),
+		),
+	)
 }
 
 func updatePlayer(key string, player *models.Player, se SimpleEngine) {
