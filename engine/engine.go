@@ -121,7 +121,10 @@ func updatePlayer(key string, player *models.Player, se SimpleEngine) {
 		if player.X == se.GameMap.MaxX-1 {
 			return
 		}
+		enemy := models.NewEnemy(models.PENGUIN, player.X, player.Y)
+		se.Enemies[enemy.ID] = enemy
 		player.X += 1
+		return
 
 	case player.MoveUpKey:
 		if player.Y == se.GameMap.MaxY-1 {
