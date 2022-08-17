@@ -12,6 +12,8 @@ type Player struct {
 
 	Displayed bool
 
+	LifeCount int
+
 	MoveUpKey    string
 	MoveDownKey  string
 	MoveRightKey string
@@ -33,6 +35,7 @@ func NewPlayer(symbol rune, x, y int, u, d, r, l, a string) *Player {
 		MoveLeftKey:  l,
 		ActionKey:    a,
 		Displayed:    true,
+		LifeCount:    3,
 	}
 }
 

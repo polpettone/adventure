@@ -95,8 +95,10 @@ func (se SimpleEngine) Machine(key string) {
 
 	se.GameMap.SetStatusLine(
 		0,
-		fmt.Sprintf("%s %d %s",
+		fmt.Sprintf("%s %d %s %d %s",
 			string(se.Player1.GetSymbol()),
+			se.Player1.LifeCount,
+			"L",
 			len(se.Player1.Items),
 			string(models.BOX),
 		),
@@ -104,8 +106,10 @@ func (se SimpleEngine) Machine(key string) {
 
 	se.GameMap.SetStatusLine(
 		1,
-		fmt.Sprintf("%s %d %s",
+		fmt.Sprintf("%s %d %s %d %s",
 			string(se.Player2.GetSymbol()),
+			se.Player2.LifeCount,
+			"L",
 			len(se.Player2.Items),
 			string(models.BOX),
 		),
@@ -162,6 +166,16 @@ func updatePlayer(key string, player *models.Player, se SimpleEngine) {
 			player.AddItem(*item)
 			logging.Log.DebugLog.Println(player.Items)
 		}
+
+	case *models.Enemy:
+		enemy := se.Enemies[element.GetID()]
+		if enemy != nil {
+			player.LifeCount = player.LifeCount - 1
+
+			delete(se.Enemies, enemy.GetID())
+			logging.Log.DebugLog.Printf("Enemy %s deleted", enemy.GetID())
+		}
+
 	}
 
 	logElements(element)
