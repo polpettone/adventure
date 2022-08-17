@@ -182,10 +182,11 @@ func logElementStates(elements []models.Element) {
 func logElements(elem models.Element) {
 	tw := tabwriter.NewWriter(logging.Log.DebugLog.Writer(), 1, 4, 1, '\t', 1)
 	fmt.Fprint(tw, fmt.Sprintf(
-		"%s \t%s \t %t \n",
+		"%s \t%s \t %d %d \n",
 		reflect.TypeOf(elem).String(),
 		elem.GetID().String(),
-		elem.IsDisplayed()),
+		elem.GetX(),
+		elem.GetY()),
 	)
 	tw.Flush()
 }
