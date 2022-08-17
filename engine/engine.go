@@ -107,7 +107,7 @@ func (se SimpleEngine) statusLineForPlayer(player models.Player, statusLineIndex
 		fmt.Sprintf("%s %d %s %d %s",
 			string(player.GetSymbol()),
 			player.LifeCount,
-			"L",
+			models.HEART,
 			len(player.Items),
 			string(models.BOX),
 		),
