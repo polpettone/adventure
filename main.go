@@ -23,7 +23,12 @@ func setupShellSettings() {
 
 func start() {
 
-	engine := engine.InitEngineOne()
+	game := &engine.PinguinBurfGame{}
+	game.Init()
+
+	engine := engine.SimpleEngine{
+		Game: game,
+	}
 
 	var b []byte = make([]byte, 1)
 	for {
