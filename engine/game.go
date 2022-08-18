@@ -22,6 +22,8 @@ type PinguinBurfGame struct {
 
 	Items   map[uuid.UUID]*models.Item
 	Enemies map[uuid.UUID]*models.Enemy
+
+	Engine Engine
 }
 
 func (g *PinguinBurfGame) Init() {
@@ -66,11 +68,6 @@ func (g *PinguinBurfGame) Init() {
 		),
 	)
 
-	clearScreen()
-	fmt.Println(gameMap.Print())
-
-	logElementStates(elements)
-
 	g.GameMap = gameMap
 	g.Enemies = enemyMap
 	g.Items = itemsMap
@@ -78,13 +75,20 @@ func (g *PinguinBurfGame) Init() {
 	g.Player1 = player1
 	g.Player2 = player2
 
+	g.Engine = EngineOne{}
+
+	g.Engine.Setup()
+
+	g.Engine.ClearScreen()
+	fmt.Println(gameMap.Print())
+	logElementStates(elements)
 }
 
 func (g PinguinBurfGame) Update(key string) error {
 	updatePlayer(key, g.Player1, g)
 	updatePlayer(key, g.Player2, g)
 
-	clearScreen()
+	g.Engine.ClearScreen()
 
 	g.GameMap.Update(g.GetElements())
 

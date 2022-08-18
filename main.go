@@ -3,38 +3,25 @@ package main
 import (
 	"fmt"
 	"os"
-	"os/exec"
 	"strings"
 
 	"github.com/polpettone/adventure/engine"
 )
 
 func main() {
-	setupShellSettings()
-	start()
+	startPinguinBurgGame()
 }
 
-func setupShellSettings() {
-	// disable input buffering
-	exec.Command("stty", "-F", "/dev/tty", "cbreak", "min", "1").Run()
-	// do not display entered characters on the screen
-	exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
-}
-
-func start() {
+func startPinguinBurgGame() {
 
 	game := &engine.PinguinBurfGame{}
 	game.Init()
-
-	engine := engine.SimpleEngine{
-		Game: game,
-	}
 
 	var b []byte = make([]byte, 1)
 	for {
 		os.Stdin.Read(b)
 		text := string(b)
-		engine.Machine(text)
+		game.Update(text)
 
 		if strings.Compare(text, "q") == 0 {
 			fmt.Println("ciao")
