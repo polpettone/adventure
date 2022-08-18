@@ -2,7 +2,9 @@ package game
 
 import (
 	"fmt"
+	"os"
 	"reflect"
+	"strings"
 	"text/tabwriter"
 
 	"github.com/google/uuid"
@@ -78,6 +80,20 @@ func (g *PinguinBurfGame) Init() {
 	g.Engine.ClearScreen()
 	fmt.Println(gameMap.Print())
 	logElementStates(elements)
+}
+
+func (g PinguinBurfGame) Run() {
+	var b []byte = make([]byte, 1)
+	for {
+		os.Stdin.Read(b)
+		text := string(b)
+		g.Update(text)
+
+		if strings.Compare(text, "q") == 0 {
+			fmt.Println("ciao")
+			os.Exit(0)
+		}
+	}
 }
 
 func (g PinguinBurfGame) Update(key string) error {
