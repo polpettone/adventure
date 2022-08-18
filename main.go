@@ -5,7 +5,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/polpettone/adventure/engine"
+	"github.com/polpettone/adventure/game"
 )
 
 func main() {
@@ -14,7 +14,7 @@ func main() {
 
 func startPinguinBurgGame() {
 
-	game := &engine.PinguinBurfGame{}
+	game := &game.PinguinBurfGame{}
 	game.Init()
 
 	var b []byte = make([]byte, 1)

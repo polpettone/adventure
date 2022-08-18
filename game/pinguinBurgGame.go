@@ -1,4 +1,4 @@
-package engine
+package game
 
 import (
 	"fmt"
@@ -6,6 +6,7 @@ import (
 	"text/tabwriter"
 
 	"github.com/google/uuid"
+	"github.com/polpettone/adventure/engine"
 	"github.com/polpettone/adventure/logging"
 	"github.com/polpettone/adventure/models"
 )
@@ -18,7 +19,7 @@ type PinguinBurfGame struct {
 	Items   map[uuid.UUID]*models.Item
 	Enemies map[uuid.UUID]*models.Enemy
 
-	Engine Engine
+	Engine engine.Engine
 }
 
 func (g *PinguinBurfGame) Init() {
@@ -70,7 +71,7 @@ func (g *PinguinBurfGame) Init() {
 	g.Player1 = player1
 	g.Player2 = player2
 
-	g.Engine = EngineOne{}
+	g.Engine = engine.EngineOne{}
 
 	g.Engine.Setup()
 

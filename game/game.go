@@ -1,4 +1,4 @@
-package engine
+package game
 
 type Game interface {
 	Init()
