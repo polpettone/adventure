@@ -23,7 +23,7 @@ func setupShellSettings() {
 
 func start() {
 
-	engine := engine.InitEngine()
+	engine := engine.InitEngineOne()
 
 	var b []byte = make([]byte, 1)
 	for {
