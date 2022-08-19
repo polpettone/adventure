@@ -5,5 +5,4 @@ type Engine interface {
 	Setup()
 
 	PlaySound()
-	StopSound()
 }

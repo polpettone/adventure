@@ -184,31 +184,28 @@ func updatePlayer(key string, player *models.Player, g PinguinBurfGame) {
 		enemy := models.NewEnemy(models.PENGUIN, player.X, player.Y)
 		g.Enemies[enemy.ID] = enemy
 		player.X += 1
+		g.Engine.PlaySound()
 		return
 
 	case player.MoveUpKey:
-		g.Engine.StopSound()
 		if player.Y == g.GameMap.MaxY-1 {
 			return
 		}
 		player.MoveUp()
 
 	case player.MoveRightKey:
-		g.Engine.StopSound()
 		if player.X == g.GameMap.MaxX-1 {
 			return
 		}
 		player.MoveRight()
 
 	case player.MoveLeftKey:
-		g.Engine.StopSound()
 		if player.X == 0 {
 			return
 		}
 		player.MoveLeft()
 
 	case player.MoveDownKey:
-		g.Engine.StopSound()
 		if player.Y == 0 {
 			return
 		}

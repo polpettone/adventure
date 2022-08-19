@@ -13,7 +13,7 @@ import (
 )
 
 type EngineOne struct {
-	audioCtrl *beep.Ctrl
+	soundBuffer beep.Buffer
 }
 
 func (e EngineOne) ClearScreen() {
@@ -22,7 +22,7 @@ func (e EngineOne) ClearScreen() {
 
 func (e *EngineOne) Setup() {
 	setupShellSettings()
-	e.audioCtrl = initSound()
+	e.soundBuffer = initSound()
 }
 
 func setupShellSettings() {
@@ -32,8 +32,8 @@ func setupShellSettings() {
 	exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
 }
 
-func initSound() *beep.Ctrl {
-	f, err := os.Open("assets/plink.mp3")
+func initSound() beep.Buffer {
+	f, err := os.Open("assets/gunshot.mp3")
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -45,22 +45,14 @@ func initSound() *beep.Ctrl {
 
 	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 
-	ctrl := &beep.Ctrl{Streamer: beep.Loop(-1, streamer), Paused: true}
-	fast := beep.ResampleRatio(4, 5, ctrl)
+	buffer := beep.NewBuffer(format)
 
-	speaker.Play(fast)
-
-	return ctrl
+	buffer.Append(streamer)
+	streamer.Close()
+	return *buffer
 }
 
 func (e *EngineOne) PlaySound() {
-	speaker.Lock()
-	e.audioCtrl.Paused = false
-	speaker.Unlock()
-}
-
-func (e *EngineOne) StopSound() {
-	speaker.Lock()
-	e.audioCtrl.Paused = true
-	speaker.Unlock()
+	shot := e.soundBuffer.Streamer(0, e.soundBuffer.Len())
+	speaker.Play(shot)
 }
