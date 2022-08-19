@@ -34,6 +34,7 @@ func (g *PinguinBurfGame) Init() {
 	enemyMap[enemy.ID] = enemy
 
 	items := []*models.Item{
+		models.NewItem(models.BOX, 1, 1),
 		models.NewItem(models.BOX, 30, 5),
 		models.NewItem(models.BOX, 10, 10),
 		models.NewItem(models.BOX, 40, 15),
@@ -73,11 +74,10 @@ func (g *PinguinBurfGame) Init() {
 	g.Player1 = player1
 	g.Player2 = player2
 
-	g.Engine = engine.EngineOne{}
-
+	g.Engine = &engine.EngineOne{}
 	g.Engine.Setup()
-
 	g.Engine.ClearScreen()
+
 	fmt.Println(gameMap.Print())
 	logElementStates(elements)
 }
@@ -187,24 +187,28 @@ func updatePlayer(key string, player *models.Player, g PinguinBurfGame) {
 		return
 
 	case player.MoveUpKey:
+		g.Engine.StopSound()
 		if player.Y == g.GameMap.MaxY-1 {
 			return
 		}
 		player.MoveUp()
 
 	case player.MoveRightKey:
+		g.Engine.StopSound()
 		if player.X == g.GameMap.MaxX-1 {
 			return
 		}
 		player.MoveRight()
 
 	case player.MoveLeftKey:
+		g.Engine.StopSound()
 		if player.X == 0 {
 			return
 		}
 		player.MoveLeft()
 
 	case player.MoveDownKey:
+		g.Engine.StopSound()
 		if player.Y == 0 {
 			return
 		}
@@ -222,6 +226,7 @@ func updatePlayer(key string, player *models.Player, g PinguinBurfGame) {
 			logging.Log.DebugLog.Printf("Item %s deleted", item.GetID())
 			player.AddItem(*item)
 			logging.Log.DebugLog.Println(player.Items)
+			g.Engine.PlaySound()
 		}
 
 	case *models.Enemy:
