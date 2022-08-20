@@ -2,10 +2,12 @@ package game
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
 	"reflect"
 	"strings"
 	"text/tabwriter"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/polpettone/adventure/engine"
@@ -34,19 +36,21 @@ func (g *PinguinBurfGame) Init() {
 	enemyMap[enemy.ID] = enemy
 
 	items := []*models.Item{
-		models.NewItem(models.BALLON, 1, 1),
-		models.NewItem(models.BALLON, 30, 5),
 		models.NewItem(models.BALLON, 10, 10),
-		models.NewItem(models.BALLON, 40, 15),
-		models.NewItem(models.BALLON, 55, 20),
 	}
 
-	y := 0
-	for x := 0; x < 79; x++ {
+	rand.Seed(time.Now().UnixNano())
 
-		if y < 29 {
-			items = append(items, models.NewItem(models.BALLON, x, y))
-		}
+	minX := 1
+	maxX := 79
+
+	minY := 1
+	maxY := 28
+
+	for n := 0; n < 100; n++ {
+		x := rand.Intn(maxX-minX+1) + minX
+		y := rand.Intn(maxY-minY+1) + minY
+		items = append(items, models.NewItem(models.BALLON, x, y))
 	}
 
 	itemsMap := map[uuid.UUID]*models.Item{}
