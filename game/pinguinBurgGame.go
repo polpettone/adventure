@@ -26,15 +26,7 @@ type PinguinBurfGame struct {
 	Engine engine.Engine
 }
 
-func (g *PinguinBurfGame) Init() {
-
-	player1 := models.NewPlayer(models.PLAYER, 0, 0, "k", "j", "l", "h", "m")
-	player2 := models.NewPlayer(models.PLAYER2, 79, 29, "w", "s", "d", "a", "x")
-
-	enemy := models.NewEnemy(models.PENGUIN, 3, 3)
-	enemyMap := map[uuid.UUID]*models.Enemy{}
-	enemyMap[enemy.ID] = enemy
-
+func initItems(count int) map[uuid.UUID]*models.Item {
 	items := []*models.Item{
 		models.NewItem(models.BALLON, 10, 10),
 	}
@@ -47,7 +39,7 @@ func (g *PinguinBurfGame) Init() {
 	minY := 1
 	maxY := 28
 
-	for n := 0; n < 100; n++ {
+	for n := 0; n < count; n++ {
 		x := rand.Intn(maxX-minX+1) + minX
 		y := rand.Intn(maxY-minY+1) + minY
 		items = append(items, models.NewItem(models.BALLON, x, y))
@@ -57,6 +49,20 @@ func (g *PinguinBurfGame) Init() {
 	for _, item := range items {
 		itemsMap[item.GetID()] = item
 	}
+
+	return itemsMap
+}
+
+func (g *PinguinBurfGame) Init() {
+
+	player1 := models.NewPlayer(models.PLAYER, 0, 0, "k", "j", "l", "h", "m")
+	player2 := models.NewPlayer(models.PLAYER2, 79, 29, "w", "s", "d", "a", "x")
+
+	enemy := models.NewEnemy(models.PENGUIN, 3, 3)
+	enemyMap := map[uuid.UUID]*models.Enemy{}
+	enemyMap[enemy.ID] = enemy
+
+	itemsMap := initItems(100)
 
 	elements := buildElementsForUpdate(itemsMap, enemyMap, *player1, *player2)
 
