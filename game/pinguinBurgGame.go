@@ -205,7 +205,10 @@ func updatePlayer(key string, player *models.Player, g PinguinBurfGame) {
 		enemy := models.NewEnemy(models.PENGUIN, player.X, player.Y)
 		g.Enemies[enemy.ID] = enemy
 		player.X += 1
-		g.Engine.PlaySound()
+		err := g.Engine.PlaySound("assets/mixkit-martial-arts-punch-2052.wav")
+		if err != nil {
+			logging.Log.InfoLog.Println(err)
+		}
 		return
 
 	case player.MoveUpKey:
@@ -244,7 +247,10 @@ func updatePlayer(key string, player *models.Player, g PinguinBurfGame) {
 			logging.Log.DebugLog.Printf("Item %s deleted", item.GetID())
 			player.AddItem(*item)
 			logging.Log.DebugLog.Println(player.Items)
-			g.Engine.PlaySound()
+			err := g.Engine.PlaySound("assets/gunshot.mp3")
+			if err != nil {
+				logging.Log.InfoLog.Println(err)
+			}
 		}
 
 	case *models.Enemy:

@@ -4,5 +4,5 @@ type Engine interface {
 	ClearScreen()
 	Setup()
 
-	PlaySound()
+	PlaySound(soundID string) error
 }
