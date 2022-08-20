@@ -94,7 +94,7 @@ func (g *PinguinBurfGame) Init() {
 	logElementStates(elements)
 }
 
-func (g PinguinBurfGame) Run() {
+func (g PinguinBurfGame) Run() bool {
 	var b []byte = make([]byte, 1)
 	for {
 		os.Stdin.Read(b)
@@ -102,9 +102,13 @@ func (g PinguinBurfGame) Run() {
 		g.Update(text)
 
 		if strings.Compare(text, "q") == 0 {
-			fmt.Println("ciao")
-			os.Exit(0)
+			return true
 		}
+
+		if strings.Compare(text, "r") == 0 {
+			return false
+		}
+
 	}
 }
 

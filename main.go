@@ -10,8 +10,14 @@ func main() {
 
 func startPinguinBurgGame() {
 
-	game := &game.PinguinBurfGame{}
-	game.Init()
-	game.Run()
+	for {
+		game := &game.PinguinBurfGame{}
+		game.Init()
+		quit := game.Run()
 
+		if quit {
+			return
+		}
+
+	}
 }

@@ -42,6 +42,7 @@ func initSound(assetFile string) beep.Buffer {
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer streamer.Close()
 
 	speaker.Init(format.SampleRate, format.SampleRate.N(time.Second/10))
 
