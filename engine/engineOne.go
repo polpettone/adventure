@@ -13,7 +13,7 @@ import (
 )
 
 type EngineOne struct {
-	soundBuffer beep.Buffer
+	gunShot beep.Buffer
 }
 
 func (e EngineOne) ClearScreen() {
@@ -22,7 +22,7 @@ func (e EngineOne) ClearScreen() {
 
 func (e *EngineOne) Setup() {
 	setupShellSettings()
-	e.soundBuffer = initSound()
+	e.gunShot = initSound("assets/gunshot.mp3")
 }
 
 func setupShellSettings() {
@@ -32,8 +32,8 @@ func setupShellSettings() {
 	exec.Command("stty", "-F", "/dev/tty", "-echo").Run()
 }
 
-func initSound() beep.Buffer {
-	f, err := os.Open("assets/gunshot.mp3")
+func initSound(assetFile string) beep.Buffer {
+	f, err := os.Open(assetFile)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -53,6 +53,6 @@ func initSound() beep.Buffer {
 }
 
 func (e *EngineOne) PlaySound() {
-	shot := e.soundBuffer.Streamer(0, e.soundBuffer.Len())
+	shot := e.gunShot.Streamer(0, e.gunShot.Len())
 	speaker.Play(shot)
 }

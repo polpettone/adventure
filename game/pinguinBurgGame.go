@@ -34,11 +34,19 @@ func (g *PinguinBurfGame) Init() {
 	enemyMap[enemy.ID] = enemy
 
 	items := []*models.Item{
-		models.NewItem(models.BOX, 1, 1),
-		models.NewItem(models.BOX, 30, 5),
-		models.NewItem(models.BOX, 10, 10),
-		models.NewItem(models.BOX, 40, 15),
-		models.NewItem(models.BOX, 55, 20),
+		models.NewItem(models.BALLON, 1, 1),
+		models.NewItem(models.BALLON, 30, 5),
+		models.NewItem(models.BALLON, 10, 10),
+		models.NewItem(models.BALLON, 40, 15),
+		models.NewItem(models.BALLON, 55, 20),
+	}
+
+	y := 0
+	for x := 0; x < 79; x++ {
+
+		if y < 29 {
+			items = append(items, models.NewItem(models.BALLON, x, y))
+		}
 	}
 
 	itemsMap := map[uuid.UUID]*models.Item{}
@@ -123,7 +131,7 @@ func (g PinguinBurfGame) statusLineForPlayer(player models.Player, statusLineInd
 			player.LifeCount,
 			models.HEART,
 			len(player.Items),
-			string(models.BOX),
+			string(models.BALLON),
 		),
 	)
 }

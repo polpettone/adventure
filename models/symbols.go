@@ -12,5 +12,7 @@ const PENGUIN = '🐧'
 
 const HEART = "❤️'"
 
+const BALLON = '🎈'
+
 const PLAYER = WHALE
 const PLAYER2 = ELEPHANT
