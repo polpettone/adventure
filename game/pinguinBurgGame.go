@@ -53,7 +53,7 @@ func initItems(count int) map[uuid.UUID]*models.Item {
 	return itemsMap
 }
 
-func (g *PinguinBurfGame) Init() {
+func (g *PinguinBurfGame) Init(engine engine.Engine) {
 
 	player1 := models.NewPlayer(models.PLAYER, 0, 0, "k", "j", "l", "h", "m")
 	player2 := models.NewPlayer(models.PLAYER2, 79, 29, "w", "s", "d", "a", "x")
@@ -62,7 +62,7 @@ func (g *PinguinBurfGame) Init() {
 	enemyMap := map[uuid.UUID]*models.Enemy{}
 	enemyMap[enemy.ID] = enemy
 
-	itemsMap := initItems(100)
+	itemsMap := initItems(500)
 
 	elements := buildElementsForUpdate(itemsMap, enemyMap, *player1, *player2)
 
@@ -92,8 +92,7 @@ func (g *PinguinBurfGame) Init() {
 	g.Player1 = player1
 	g.Player2 = player2
 
-	g.Engine = &engine.EngineOne{}
-	g.Engine.Setup()
+	g.Engine = engine
 	g.Engine.ClearScreen()
 
 	fmt.Println(gameMap.Print())
