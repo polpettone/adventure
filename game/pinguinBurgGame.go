@@ -25,33 +25,6 @@ type PinguinBurfGame struct {
 	Engine engine.Engine
 }
 
-func initItems(count int) map[uuid.UUID]*models.Item {
-	items := []*models.Item{
-		models.NewItem(models.BALLON, 10, 10),
-	}
-
-	rand.Seed(time.Now().UnixNano())
-
-	minX := 1
-	maxX := 79
-
-	minY := 1
-	maxY := 28
-
-	for n := 0; n < count; n++ {
-		x := rand.Intn(maxX-minX+1) + minX
-		y := rand.Intn(maxY-minY+1) + minY
-		items = append(items, models.NewItem(models.BALLON, x, y))
-	}
-
-	itemsMap := map[uuid.UUID]*models.Item{}
-	for _, item := range items {
-		itemsMap[item.GetID()] = item
-	}
-
-	return itemsMap
-}
-
 func (g *PinguinBurfGame) Init(engine engine.Engine) {
 
 	player1 := models.NewPlayer(models.PLAYER, 0, 0, "k", "j", "l", "h", "m")
@@ -96,38 +69,6 @@ func (g *PinguinBurfGame) Init(engine engine.Engine) {
 
 	fmt.Println(gameMap.Print())
 	logElementStates(elements)
-}
-
-func inputKeyReceiver(keyChannel chan string) {
-	var b []byte = make([]byte, 1)
-	for {
-		os.Stdin.Read(b)
-		i := string(b)
-		keyChannel <- i
-	}
-}
-
-func inputKeyHandler(keyChannel chan string, g Game) {
-
-	for {
-		select {
-
-		case key := <-keyChannel:
-
-			switch key {
-			case "q":
-				fmt.Printf("%s", "bye bye")
-				os.Exit(0)
-			case "r":
-				fmt.Printf("%s", "reload \n")
-			default:
-				g.Update(key)
-				fmt.Printf("no binding for %s\n", key)
-			}
-
-		}
-	}
-
 }
 
 func (g PinguinBurfGame) Run() {
@@ -287,5 +228,64 @@ func updatePlayer(key string, player *models.Player, g PinguinBurfGame) {
 	}
 
 	logElements(element)
+
+}
+
+func initItems(count int) map[uuid.UUID]*models.Item {
+	items := []*models.Item{
+		models.NewItem(models.BALLON, 10, 10),
+	}
+
+	rand.Seed(time.Now().UnixNano())
+
+	minX := 1
+	maxX := 79
+
+	minY := 1
+	maxY := 28
+
+	for n := 0; n < count; n++ {
+		x := rand.Intn(maxX-minX+1) + minX
+		y := rand.Intn(maxY-minY+1) + minY
+		items = append(items, models.NewItem(models.BALLON, x, y))
+	}
+
+	itemsMap := map[uuid.UUID]*models.Item{}
+	for _, item := range items {
+		itemsMap[item.GetID()] = item
+	}
+
+	return itemsMap
+}
+
+func inputKeyReceiver(keyChannel chan string) {
+	var b []byte = make([]byte, 1)
+	for {
+		os.Stdin.Read(b)
+		i := string(b)
+		keyChannel <- i
+	}
+}
+
+func inputKeyHandler(keyChannel chan string, g Game) {
+
+	for {
+		select {
+
+		case key := <-keyChannel:
+
+			switch key {
+			case "q":
+				fmt.Printf("%s", "bye bye")
+				os.Exit(0)
+			case "r":
+				fmt.Printf("%s", "reload \n")
+			default:
+				g.Update(key)
+				fmt.Printf("no binding for %s\n", key)
+			}
+
+		}
+	}
 
 }
