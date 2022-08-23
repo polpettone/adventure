@@ -34,7 +34,7 @@ func (g *PinguinBurfGame) Init(engine engine.Engine) {
 	enemyMap := map[uuid.UUID]*models.Enemy{}
 	enemyMap[enemy.ID] = enemy
 
-	itemsMap := initItems(500)
+	itemsMap := initItems(10)
 
 	elements := buildElementsForUpdate(itemsMap, enemyMap, *player1, *player2)
 
@@ -73,9 +73,11 @@ func (g *PinguinBurfGame) Init(engine engine.Engine) {
 
 func (g PinguinBurfGame) Run() {
 
+	impulseChannel := make(chan bool, 1)
 	keyChannel := make(chan string, 1)
+	go impulseGenerator(impulseChannel, time.Second/10)
 	go inputKeyReceiver(keyChannel)
-	go inputKeyHandler(keyChannel, &g)
+	go inputKeyHandler(keyChannel, impulseChannel, &g)
 
 	select {}
 }
@@ -83,10 +85,6 @@ func (g PinguinBurfGame) Run() {
 func (g PinguinBurfGame) Update(key string) error {
 	updatePlayer(key, g.Player1, g)
 	updatePlayer(key, g.Player2, g)
-
-	for _, e := range g.Enemies {
-		e.Update()
-	}
 
 	g.Engine.ClearScreen()
 
@@ -100,7 +98,22 @@ func (g PinguinBurfGame) Update(key string) error {
 	logElementStates(g.GetElements())
 
 	return nil
+}
 
+func (g PinguinBurfGame) UpdateEnemies() {
+	for _, e := range g.Enemies {
+		e.Update()
+	}
+	g.Engine.ClearScreen()
+
+	g.GameMap.Update(g.GetElements())
+
+	g.statusLineForPlayer(*g.Player1, 0)
+	g.statusLineForPlayer(*g.Player2, 1)
+
+	fmt.Println(g.GameMap.Print())
+
+	logElementStates(g.GetElements())
 }
 
 func (g PinguinBurfGame) statusLineForPlayer(player models.Player, statusLineIndex int) {
@@ -271,7 +284,7 @@ func inputKeyReceiver(keyChannel chan string) {
 	}
 }
 
-func inputKeyHandler(keyChannel chan string, g Game) {
+func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g Game) {
 
 	for {
 		select {
@@ -288,7 +301,16 @@ func inputKeyHandler(keyChannel chan string, g Game) {
 				g.Update(key)
 			}
 
+		case <-impulseChannel:
+			g.UpdateEnemies()
 		}
 	}
 
+}
+
+func impulseGenerator(impulseChannel chan bool, frequence time.Duration) {
+	for {
+		impulseChannel <- true
+		time.Sleep(frequence)
+	}
 }

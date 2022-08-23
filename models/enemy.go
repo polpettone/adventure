@@ -28,7 +28,7 @@ func NewEnemy(symbol rune, x, y int) *Enemy {
 func (e *Enemy) Update() {
 
 	rand.Seed(time.Now().UnixNano())
-	choice := rand.Intn(3)
+	choice := rand.Intn(4)
 
 	switch choice {
 
@@ -38,7 +38,7 @@ func (e *Enemy) Update() {
 		e.MoveDown()
 	case 2:
 		e.MoveLeft()
-	case 4:
+	case 3:
 		e.MoveRight()
 
 	}
