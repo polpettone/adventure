@@ -90,8 +90,9 @@ func (m *Map) Print() string {
 	return s
 }
 
-func (m *Map) place(elem Element) Element {
-	prevElem := m.Positions[elem.GetX()][elem.GetY()]
-	m.Positions[elem.GetX()][elem.GetY()] = elem
-	return prevElem
+func (m *Map) place(elem Element) {
+	if elem.GetX() < m.MaxX &&
+		elem.GetY() < m.MaxY {
+		m.Positions[elem.GetX()][elem.GetY()] = elem
+	}
 }

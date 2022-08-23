@@ -84,6 +84,10 @@ func (g PinguinBurfGame) Update(key string) error {
 	updatePlayer(key, g.Player1, g)
 	updatePlayer(key, g.Player2, g)
 
+	for _, e := range g.Enemies {
+		e.Update()
+	}
+
 	g.Engine.ClearScreen()
 
 	g.GameMap.Update(g.GetElements())
@@ -282,7 +286,6 @@ func inputKeyHandler(keyChannel chan string, g Game) {
 				fmt.Printf("%s", "reload \n")
 			default:
 				g.Update(key)
-				fmt.Printf("no binding for %s\n", key)
 			}
 
 		}
