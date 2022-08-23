@@ -5,7 +5,6 @@ import (
 	"math/rand"
 	"os"
 	"reflect"
-	"strings"
 	"text/tabwriter"
 	"time"
 
@@ -99,22 +98,45 @@ func (g *PinguinBurfGame) Init(engine engine.Engine) {
 	logElementStates(elements)
 }
 
-func (g PinguinBurfGame) Run() bool {
+func inputKeyReceiver(keyChannel chan string) {
 	var b []byte = make([]byte, 1)
 	for {
 		os.Stdin.Read(b)
-		text := string(b)
-		g.Update(text)
-
-		if strings.Compare(text, "q") == 0 {
-			return true
-		}
-
-		if strings.Compare(text, "r") == 0 {
-			return false
-		}
-
+		i := string(b)
+		keyChannel <- i
 	}
+}
+
+func inputKeyHandler(keyChannel chan string, g Game) {
+
+	for {
+		select {
+
+		case key := <-keyChannel:
+
+			switch key {
+			case "q":
+				fmt.Printf("%s", "bye bye")
+				os.Exit(0)
+			case "r":
+				fmt.Printf("%s", "reload \n")
+			default:
+				g.Update(key)
+				fmt.Printf("no binding for %s\n", key)
+			}
+
+		}
+	}
+
+}
+
+func (g PinguinBurfGame) Run() {
+
+	keyChannel := make(chan string, 1)
+	go inputKeyReceiver(keyChannel)
+	go inputKeyHandler(keyChannel, &g)
+
+	select {}
 }
 
 func (g PinguinBurfGame) Update(key string) error {

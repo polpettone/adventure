@@ -14,14 +14,8 @@ func startPinguinBurgGame() {
 	engine := &engine.EngineOne{}
 	engine.Setup()
 
-	for {
-		game := &game.PinguinBurfGame{}
-		game.Init(engine)
-		quit := game.Run()
+	game := &game.PinguinBurfGame{}
+	game.Init(engine)
+	game.Run()
 
-		if quit {
-			return
-		}
-
-	}
 }
