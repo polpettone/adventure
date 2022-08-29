@@ -9,13 +9,13 @@ import (
 
 type Enemy struct {
 	ID        uuid.UUID
-	Symbol    rune
+	Symbol    string
 	X         int
 	Y         int
 	Displayed bool
 }
 
-func NewEnemy(symbol rune, x, y int) *Enemy {
+func NewEnemy(symbol string, x, y int) *Enemy {
 	return &Enemy{
 		ID:        uuid.New(),
 		Symbol:    symbol,
@@ -65,7 +65,7 @@ func (e *Enemy) MoveRight() {
 	e.X += 1
 }
 
-func (e Enemy) GetSymbol() rune {
+func (e Enemy) GetSymbol() string {
 	return e.Symbol
 }
 

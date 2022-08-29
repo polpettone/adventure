@@ -6,12 +6,12 @@ import (
 
 type Field struct {
 	ID     uuid.UUID
-	Symbol rune
+	Symbol string
 	X      int
 	Y      int
 }
 
-func NewField(symbol rune, x, y int) Field {
+func NewField(symbol string, x, y int) Field {
 	return Field{
 		ID:     uuid.New(),
 		Symbol: symbol,
@@ -20,7 +20,7 @@ func NewField(symbol rune, x, y int) Field {
 	}
 }
 
-func (f Field) GetSymbol() rune {
+func (f Field) GetSymbol() string {
 	return f.Symbol
 }
 

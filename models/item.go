@@ -6,14 +6,14 @@ import (
 )
 
 type Item struct {
-	Symbol    rune
+	Symbol    string
 	X         int
 	Y         int
 	ID        uuid.UUID
 	Displayed bool
 }
 
-func NewItem(symbol rune, x, y int) *Item {
+func NewItem(symbol string, x, y int) *Item {
 	return &Item{
 		ID:        uuid.New(),
 		Symbol:    symbol,
@@ -23,7 +23,7 @@ func NewItem(symbol rune, x, y int) *Item {
 	}
 }
 
-func (i Item) GetSymbol() rune {
+func (i Item) GetSymbol() string {
 	return i.Symbol
 }
 

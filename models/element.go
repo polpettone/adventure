@@ -5,7 +5,7 @@ import (
 )
 
 type Element interface {
-	GetSymbol() rune
+	GetSymbol() string
 	GetX() int
 	GetY() int
 	GetID() uuid.UUID

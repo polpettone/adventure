@@ -6,7 +6,7 @@ import (
 
 type Player struct {
 	ID     uuid.UUID
-	Symbol rune
+	Symbol string
 	X      int
 	Y      int
 
@@ -23,7 +23,7 @@ type Player struct {
 	Items []Item
 }
 
-func NewPlayer(symbol rune, x, y int, u, d, r, l, a string) *Player {
+func NewPlayer(symbol string, x, y int, u, d, r, l, a string) *Player {
 	return &Player{
 		ID:           uuid.New(),
 		Symbol:       symbol,
@@ -56,7 +56,7 @@ func (p *Player) MoveRight() {
 	p.X += 1
 }
 
-func (b Player) GetSymbol() rune {
+func (b Player) GetSymbol() string {
 	return b.Symbol
 }
 
