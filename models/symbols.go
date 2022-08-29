@@ -1,18 +1,35 @@
 package models
 
+import "strings"
+
 const GOPHER = ""
 const WATER = "~"
-const FIELD = " "
 const BOX = ""
 const GITHUB = ""
 
-const ELEPHANT = "🐘"
-const WHALE = "🐋"
-const PENGUIN = "🐧"
+const FIELD_SYMBOL = " "
+
+var FIELD string = strings.Repeat(FIELD_SYMBOL, FIELD_WIDTH)
+
+const ELEPHANT_SYMBOL = "🐘"
+
+var ELEPHANT string = ELEPHANT_SYMBOL + strings.Repeat(FIELD_SYMBOL, FIELD_WIDTH-len(ELEPHANT_SYMBOL)+2)
+
+const WHALE_SYMBOL = "🐋"
+
+var WHALE string = WHALE_SYMBOL + strings.Repeat(FIELD_SYMBOL, FIELD_WIDTH-len(WHALE_SYMBOL)+2)
+
+const PENGUIN_SYMBOL = "🐧"
+
+var PENGUIN string = PENGUIN_SYMBOL + strings.Repeat(FIELD_SYMBOL, FIELD_WIDTH-len(PENGUIN_SYMBOL)+2)
 
 const HEART = "❤️'"
 
-const BALLON = "🎈"
+const BALLON_SYMBOL = "🎈"
 
-const PLAYER = WHALE
-const PLAYER2 = ELEPHANT
+var BALLON string = BALLON_SYMBOL + strings.Repeat(FIELD_SYMBOL, FIELD_WIDTH-len(BALLON_SYMBOL)+2)
+
+var PLAYER = WHALE
+var PLAYER2 = ELEPHANT
+
+const FIELD_WIDTH = 2

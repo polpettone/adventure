@@ -41,6 +41,7 @@ func NewMap(maxX, maxY int, elements []Element) *Map {
 }
 
 func (m *Map) Clear() {
+
 	for x := 0; x < m.MaxX; x++ {
 		for y := 0; y < m.MaxY; y++ {
 			field := NewField(FIELD, x, y)

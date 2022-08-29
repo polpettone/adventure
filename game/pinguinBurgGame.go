@@ -28,17 +28,17 @@ type PinguinBurfGame struct {
 func (g *PinguinBurfGame) Init(engine engine.Engine) {
 
 	player1 := models.NewPlayer(models.PLAYER, 0, 0, "k", "j", "l", "h", "m")
-	player2 := models.NewPlayer(models.PLAYER2, 79, 29, "w", "s", "d", "a", "x")
+	player2 := models.NewPlayer(models.PLAYER2, 29, 29, "w", "s", "d", "a", "x")
 
 	enemy := models.NewEnemy(models.PENGUIN, 3, 3)
 	enemyMap := map[uuid.UUID]*models.Enemy{}
 	enemyMap[enemy.ID] = enemy
 
-	itemsMap := initItems(10)
+	itemsMap := initItems(20)
 
 	elements := buildElementsForUpdate(itemsMap, enemyMap, *player1, *player2)
 
-	gameMap := models.NewMap(80, 30, elements)
+	gameMap := models.NewMap(30, 30, elements)
 	gameMap.Update(elements)
 
 	gameMap.SetStatusLine(
@@ -256,7 +256,7 @@ func initItems(count int) map[uuid.UUID]*models.Item {
 	rand.Seed(time.Now().UnixNano())
 
 	minX := 1
-	maxX := 79
+	maxX := 28
 
 	minY := 1
 	maxY := 28
