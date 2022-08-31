@@ -73,14 +73,8 @@ func (m *Map) Print() string {
 	var s string
 	for y := m.MaxY - 1; y >= 0; y-- {
 		for x := 0; x < m.MaxX; x++ {
-
 			e := m.Positions[x][y]
-
-			if e.IsDisplayed() {
-				s += fmt.Sprintf(string(e.GetSymbol()))
-			} else {
-				s += string(FIELD)
-			}
+			s += fmt.Sprintf(string(e.GetSymbol()))
 		}
 		s += "\n"
 	}

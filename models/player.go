@@ -10,8 +10,6 @@ type Player struct {
 	X      int
 	Y      int
 
-	Displayed bool
-
 	LifeCount int
 
 	MoveUpKey    string
@@ -34,7 +32,6 @@ func NewPlayer(symbol string, x, y int, u, d, r, l, a string) *Player {
 		MoveRightKey: r,
 		MoveLeftKey:  l,
 		ActionKey:    a,
-		Displayed:    true,
 		LifeCount:    3,
 	}
 }
@@ -70,16 +67,4 @@ func (b Player) GetY() int {
 
 func (p Player) GetID() uuid.UUID {
 	return p.ID
-}
-
-func (i Player) IsDisplayed() bool {
-	return i.Displayed
-}
-
-func (i Player) DisplayOn() {
-	i.Displayed = true
-}
-
-func (i Player) DisplayOff() {
-	i.Displayed = false
 }

@@ -2,24 +2,21 @@ package models
 
 import (
 	"github.com/google/uuid"
-	"github.com/polpettone/adventure/logging"
 )
 
 type Item struct {
-	Symbol    string
-	X         int
-	Y         int
-	ID        uuid.UUID
-	Displayed bool
+	Symbol string
+	X      int
+	Y      int
+	ID     uuid.UUID
 }
 
 func NewItem(symbol string, x, y int) *Item {
 	return &Item{
-		ID:        uuid.New(),
-		Symbol:    symbol,
-		X:         x,
-		Y:         y,
-		Displayed: true,
+		ID:     uuid.New(),
+		Symbol: symbol,
+		X:      x,
+		Y:      y,
 	}
 }
 
@@ -37,17 +34,4 @@ func (i Item) GetY() int {
 
 func (i Item) GetID() uuid.UUID {
 	return i.ID
-}
-
-func (i *Item) IsDisplayed() bool {
-	return i.Displayed
-}
-
-func (i *Item) DisplayOn() {
-	i.Displayed = true
-}
-
-func (i *Item) DisplayOff() {
-	i.Displayed = false
-	logging.Log.DebugLog.Printf("Item %s display off", i.GetID().String())
 }

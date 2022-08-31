@@ -8,20 +8,18 @@ import (
 )
 
 type Enemy struct {
-	ID        uuid.UUID
-	Symbol    string
-	X         int
-	Y         int
-	Displayed bool
+	ID     uuid.UUID
+	Symbol string
+	X      int
+	Y      int
 }
 
 func NewEnemy(symbol string, x, y int) *Enemy {
 	return &Enemy{
-		ID:        uuid.New(),
-		Symbol:    symbol,
-		X:         x,
-		Y:         y,
-		Displayed: true,
+		ID:     uuid.New(),
+		Symbol: symbol,
+		X:      x,
+		Y:      y,
 	}
 }
 
@@ -79,16 +77,4 @@ func (e Enemy) GetY() int {
 
 func (e Enemy) GetID() uuid.UUID {
 	return e.ID
-}
-
-func (i Enemy) IsDisplayed() bool {
-	return i.Displayed
-}
-
-func (i Enemy) DisplayOn() {
-	i.Displayed = true
-}
-
-func (i Enemy) DisplayOff() {
-	i.Displayed = false
 }
