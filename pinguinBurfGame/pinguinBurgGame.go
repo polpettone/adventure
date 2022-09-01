@@ -44,7 +44,7 @@ func (g *PinguinBurfGame) Init(engine engine.Engine) {
 	gameMap.Update(elements)
 
 	gameMap.SetStatusLine(
-		2,
+		"player1",
 		fmt.Sprintf("%s %s",
 			string(player1.GetSymbol()),
 			"k j l h m",
@@ -52,7 +52,7 @@ func (g *PinguinBurfGame) Init(engine engine.Engine) {
 	)
 
 	gameMap.SetStatusLine(
-		3,
+		"player2",
 		fmt.Sprintf("%s %s",
 			string(player2.GetSymbol()),
 			"w s d a x",
@@ -92,8 +92,8 @@ func (g PinguinBurfGame) Update(key string) error {
 
 	g.GameMap.Update(g.GetElements())
 
-	g.statusLineForPlayer(*g.Player1, 0)
-	g.statusLineForPlayer(*g.Player2, 1)
+	g.statusLineForPlayer(*g.Player1, "p1")
+	g.statusLineForPlayer(*g.Player2, "p2")
 
 	fmt.Println(g.GameMap.Print())
 
@@ -110,17 +110,17 @@ func (g PinguinBurfGame) UpdateEnemies() {
 
 	g.GameMap.Update(g.GetElements())
 
-	g.statusLineForPlayer(*g.Player1, 0)
-	g.statusLineForPlayer(*g.Player2, 1)
+	g.statusLineForPlayer(*g.Player1, "p1")
+	g.statusLineForPlayer(*g.Player2, "p2")
 
 	fmt.Println(g.GameMap.Print())
 
 	logElementStates(g.GetElements())
 }
 
-func (g PinguinBurfGame) statusLineForPlayer(player models.Player, statusLineIndex int) {
+func (g PinguinBurfGame) statusLineForPlayer(player models.Player, key string) {
 	g.GameMap.SetStatusLine(
-		statusLineIndex,
+		key,
 		fmt.Sprintf("%s %d %s %d %s",
 			string(player.GetSymbol()),
 			player.LifeCount,

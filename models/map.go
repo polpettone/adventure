@@ -2,24 +2,23 @@ package models
 
 import (
 	"fmt"
+	"sort"
+	"strings"
+
+	"github.com/polpettone/adventure/logging"
 )
 
 type Map struct {
 	MaxX        int
 	MaxY        int
-	StatusLines []string
+	StatusLines map[string]string
 
 	Positions [][]Element
 }
 
 func NewMap(maxX, maxY int) *Map {
 
-	statusLines := []string{
-		"Dummy status line 1",
-		"Dummy status line 2",
-		"Dummy status line 3",
-		"Dummy status line 4",
-	}
+	statusLines := map[string]string{}
 
 	positions := make([][]Element, maxX)
 	for n := range positions {
@@ -59,12 +58,8 @@ func (m *Map) GetElementFromPos(x, y int) Element {
 	return m.Positions[x][y]
 }
 
-func (m *Map) SetStatusLine(number int, text string) {
-	if len(m.StatusLines) <= number {
-		//TODO: logging
-		return
-	}
-	m.StatusLines[number] = text
+func (m *Map) SetStatusLine(key string, text string) {
+	m.StatusLines[key] = text
 }
 
 func (m *Map) Print() string {
@@ -77,10 +72,31 @@ func (m *Map) Print() string {
 		s += "\n"
 	}
 	s += "\n"
-	for _, l := range m.StatusLines {
-		s += fmt.Sprintf("%s \n", l)
-	}
+
+	s += printStatusLine(m.StatusLines)
+
 	return s
+}
+
+func printStatusLine(statusLines map[string]string) string {
+
+	keys := make([]string, len(statusLines))
+	for k := range statusLines {
+		keys = append(keys, k)
+	}
+
+	logging.Log.DebugLog.Println(keys)
+	logging.Log.DebugLog.Println(strings.Repeat("-", 10))
+	sort.Strings(keys)
+	logging.Log.DebugLog.Println(keys)
+
+	s := ""
+	for _, k := range keys {
+		s += fmt.Sprintf("%s \n", statusLines[k])
+	}
+
+	return s
+
 }
 
 func (m *Map) place(elem Element) {
