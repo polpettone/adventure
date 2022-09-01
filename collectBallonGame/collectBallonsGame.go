@@ -47,6 +47,7 @@ func (g CollectBallonsGame) Run() {
 func (g CollectBallonsGame) Update(key string) error {
 	updatePlayer(key, g.Player1, g)
 	g.Engine.ClearScreen()
+	g.statusLineForPlayer(*g.Player1, "p1")
 	g.GameMap.Update(g.GetElements())
 	fmt.Println(g.GameMap.Print())
 	logElementStates(g.GetElements())
@@ -57,6 +58,18 @@ func (g CollectBallonsGame) GetElements() []models.Element {
 	return buildElements(g.Items, *g.Player1)
 }
 
+func (g CollectBallonsGame) statusLineForPlayer(player models.Player, key string) {
+	g.GameMap.SetStatusLine(
+		key,
+		fmt.Sprintf("%s %d %s %d %s",
+			string(player.GetSymbol()),
+			player.LifeCount,
+			models.HEART,
+			len(player.Items),
+			string(models.BALLON),
+		),
+	)
+}
 func updatePlayer(key string, player *models.Player, g CollectBallonsGame) {
 	switch key {
 

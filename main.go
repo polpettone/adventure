@@ -7,7 +7,7 @@ import (
 )
 
 func main() {
-	startPinguinBurgGame()
+	startCollectBallonsGame()
 }
 
 func startPinguinBurgGame() {
