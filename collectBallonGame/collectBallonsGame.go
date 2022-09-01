@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"math/rand"
 	"os"
+	"reflect"
+	"text/tabwriter"
 	"time"
 
 	"github.com/google/uuid"
@@ -45,8 +47,14 @@ func (g CollectBallonsGame) Run() {
 func (g CollectBallonsGame) Update(key string) error {
 	updatePlayer(key, g.Player1, g)
 	g.Engine.ClearScreen()
+	g.GameMap.Update(g.GetElements())
 	fmt.Println(g.GameMap.Print())
+	logElementStates(g.GetElements())
 	return nil
+}
+
+func (g CollectBallonsGame) GetElements() []models.Element {
+	return buildElements(g.Items, *g.Player1)
 }
 
 func updatePlayer(key string, player *models.Player, g CollectBallonsGame) {
@@ -175,4 +183,23 @@ func buildElements(
 	}
 	elements = append(elements, player1)
 	return elements
+}
+
+func logElementStates(elements []models.Element) {
+	for _, elem := range elements {
+		logElements(elem)
+	}
+	logging.Log.DebugLog.Println("-------------------------------------")
+}
+
+func logElements(elem models.Element) {
+	tw := tabwriter.NewWriter(logging.Log.DebugLog.Writer(), 1, 4, 1, '\t', 1)
+	fmt.Fprint(tw, fmt.Sprintf(
+		"%s \t%s \t %d %d \n",
+		reflect.TypeOf(elem).String(),
+		elem.GetID().String(),
+		elem.GetX(),
+		elem.GetY()),
+	)
+	tw.Flush()
 }
