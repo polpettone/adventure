@@ -25,12 +25,18 @@ func (g *CollectBallonsGame) Init(engine engine.Engine) {
 
 	g.Player1 = models.NewPlayer(models.PLAYER, 0, 0, "k", "j", "l", "h", "m")
 	g.GameMap = models.NewMap(30, 30)
-	g.Items = initializeItems(20, *g.GameMap, models.BALLON)
+	g.Items = initializeItems(1, *g.GameMap, models.BALLON)
 
 	elements := buildElements(g.Items, *g.Player1)
 	g.GameMap.Update(elements)
 
 	g.Engine = engine
+}
+
+func (g CollectBallonsGame) checkGameOverCriteria() {
+	if len(g.Items) == 0 {
+		g.GameMap.SetStatusLine("Gameover", "All Ballons collected. GameOver")
+	}
 }
 
 func (g CollectBallonsGame) Run() {
@@ -51,6 +57,7 @@ func (g CollectBallonsGame) Update(key string) error {
 	g.GameMap.Update(g.GetElements())
 	fmt.Println(g.GameMap.Print())
 	logElementStates(g.GetElements())
+	g.checkGameOverCriteria()
 	return nil
 }
 
