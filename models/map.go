@@ -2,10 +2,6 @@ package models
 
 import (
 	"fmt"
-	"sort"
-	"strings"
-
-	"github.com/polpettone/adventure/logging"
 )
 
 type Map struct {
@@ -84,11 +80,6 @@ func printStatusLine(statusLines map[string]string) string {
 	for k := range statusLines {
 		keys = append(keys, k)
 	}
-
-	logging.Log.DebugLog.Println(keys)
-	logging.Log.DebugLog.Println(strings.Repeat("-", 10))
-	sort.Strings(keys)
-	logging.Log.DebugLog.Println(keys)
 
 	s := ""
 	for _, k := range keys {
