@@ -9,11 +9,10 @@ type Map struct {
 	MaxY        int
 	StatusLines []string
 
-	Elements  []Element
 	Positions [][]Element
 }
 
-func NewMap(maxX, maxY int, elements []Element) *Map {
+func NewMap(maxX, maxY int) *Map {
 
 	statusLines := []string{
 		"Dummy status line 1",
@@ -31,7 +30,6 @@ func NewMap(maxX, maxY int, elements []Element) *Map {
 		MaxX:        maxX,
 		MaxY:        maxY,
 		StatusLines: statusLines,
-		Elements:    elements,
 		Positions:   positions,
 	}
 

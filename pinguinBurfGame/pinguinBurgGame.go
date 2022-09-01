@@ -1,4 +1,4 @@
-package game
+package pinguinBurfGame
 
 import (
 	"fmt"
@@ -10,6 +10,7 @@ import (
 
 	"github.com/google/uuid"
 	"github.com/polpettone/adventure/engine"
+	"github.com/polpettone/adventure/game"
 	"github.com/polpettone/adventure/logging"
 	"github.com/polpettone/adventure/models"
 )
@@ -38,7 +39,8 @@ func (g *PinguinBurfGame) Init(engine engine.Engine) {
 
 	elements := buildElementsForUpdate(itemsMap, enemyMap, *player1, *player2)
 
-	gameMap := models.NewMap(30, 30, elements)
+	gameMap := models.NewMap(30, 30)
+
 	gameMap.Update(elements)
 
 	gameMap.SetStatusLine(
@@ -284,7 +286,7 @@ func inputKeyReceiver(keyChannel chan string) {
 	}
 }
 
-func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g Game) {
+func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g game.Game) {
 
 	for {
 		select {
