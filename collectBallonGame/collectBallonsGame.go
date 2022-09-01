@@ -14,11 +14,14 @@ import (
 	"github.com/polpettone/adventure/models"
 )
 
+const GAME_FREQUENCE time.Duration = time.Second / 10
+
 type CollectBallonsGame struct {
 	GameMap *models.Map
 	Player1 *models.Player
 	Items   map[uuid.UUID]*models.Item
 	Engine  engine.Engine
+	Clock   time.Duration
 }
 
 func (g *CollectBallonsGame) Init(engine engine.Engine) {
@@ -30,12 +33,17 @@ func (g *CollectBallonsGame) Init(engine engine.Engine) {
 	elements := buildElements(g.Items, *g.Player1)
 	g.GameMap.Update(elements)
 
+	g.Clock = 0 * time.Minute
 	g.Engine = engine
 }
 
 func (g CollectBallonsGame) checkGameOverCriteria() {
 	if len(g.Items) == 0 {
-		g.GameMap.SetStatusLine("Gameover", "All Ballons collected. GameOver")
+
+		finishTime := g.Clock
+		g.GameMap.SetStatusLine(
+			"Gameover",
+			fmt.Sprintf("All Ballons collected in %v. GameOver", finishTime))
 	}
 }
 
@@ -43,7 +51,7 @@ func (g CollectBallonsGame) Run() {
 
 	impulseChannel := make(chan bool, 1)
 	keyChannel := make(chan string, 1)
-	go impulseGenerator(impulseChannel, time.Second/10)
+	go impulseGenerator(impulseChannel, GAME_FREQUENCE)
 	go inputKeyReceiver(keyChannel)
 	go inputKeyHandler(keyChannel, impulseChannel, &g)
 
@@ -141,6 +149,12 @@ func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g *Collec
 			default:
 				g.Update(key)
 			}
+		case <-impulseChannel:
+			g.Clock += GAME_FREQUENCE
+			g.GameMap.SetStatusLine("Clock", fmt.Sprintf("%v", g.Clock))
+			g.Engine.ClearScreen()
+			g.GameMap.Update(g.GetElements())
+			fmt.Println(g.GameMap.Print())
 		}
 
 	}
