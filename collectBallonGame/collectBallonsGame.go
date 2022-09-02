@@ -16,12 +16,20 @@ import (
 
 const GAME_FREQUENCE time.Duration = time.Second / 10
 
+type GameState int
+
+const (
+	RUNNING GameState = iota
+	GAMEOVER
+)
+
 type CollectBallonsGame struct {
-	GameMap *models.Map
-	Player1 *models.Player
-	Items   map[uuid.UUID]*models.Item
-	Engine  engine.Engine
-	Clock   time.Duration
+	GameMap   *models.Map
+	Player1   *models.Player
+	Items     map[uuid.UUID]*models.Item
+	Engine    engine.Engine
+	Clock     time.Duration
+	GameState GameState
 }
 
 func (g *CollectBallonsGame) Init(engine engine.Engine) {
@@ -35,12 +43,15 @@ func (g *CollectBallonsGame) Init(engine engine.Engine) {
 
 	g.Clock = 0 * time.Minute
 	g.Engine = engine
+	g.GameState = RUNNING
 }
 
-func (g CollectBallonsGame) checkGameOverCriteria() {
-	if len(g.Items) == 0 {
+func (g *CollectBallonsGame) checkGameOverCriteria() {
+
+	if g.GameState == RUNNING && len(g.Items) == 0 {
 
 		finishTime := g.Clock
+		g.GameState = GAMEOVER
 		g.GameMap.SetStatusLine(
 			"Gameover",
 			fmt.Sprintf("All Ballons collected in %v. GameOver", finishTime))
@@ -58,7 +69,7 @@ func (g CollectBallonsGame) Run() {
 	select {}
 }
 
-func (g CollectBallonsGame) Update(key string) error {
+func (g *CollectBallonsGame) Update(key string) error {
 	updatePlayer(key, g.Player1, g)
 	g.Engine.ClearScreen()
 	g.statusLineForPlayer(*g.Player1, "p1")
@@ -85,7 +96,7 @@ func (g CollectBallonsGame) statusLineForPlayer(player models.Player, key string
 		),
 	)
 }
-func updatePlayer(key string, player *models.Player, g CollectBallonsGame) {
+func updatePlayer(key string, player *models.Player, g *CollectBallonsGame) {
 	switch key {
 
 	case player.MoveUpKey:
