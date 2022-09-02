@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"sort"
 )
 
 type Map struct {
@@ -81,6 +82,7 @@ func printStatusLine(statusLines map[string]string) string {
 		keys = append(keys, k)
 	}
 
+	sort.Strings(keys)
 	s := ""
 	for _, k := range keys {
 		s += fmt.Sprintf("%s \n", statusLines[k])
