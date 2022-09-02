@@ -2,6 +2,7 @@ package models
 
 import (
 	"github.com/google/uuid"
+	"github.com/polpettone/adventure/game"
 )
 
 type Player struct {
@@ -12,27 +13,19 @@ type Player struct {
 
 	LifeCount int
 
-	MoveUpKey    string
-	MoveDownKey  string
-	MoveRightKey string
-	MoveLeftKey  string
-	ActionKey    string
+	ControlMap game.ControlMap
 
 	Items []Item
 }
 
-func NewPlayer(symbol string, x, y int, u, d, r, l, a string) *Player {
+func NewPlayer(symbol string, x, y int, controlMap game.ControlMap) *Player {
 	return &Player{
-		ID:           uuid.New(),
-		Symbol:       symbol,
-		X:            x,
-		Y:            y,
-		MoveUpKey:    u,
-		MoveDownKey:  d,
-		MoveRightKey: r,
-		MoveLeftKey:  l,
-		ActionKey:    a,
-		LifeCount:    3,
+		ID:         uuid.New(),
+		Symbol:     symbol,
+		X:          x,
+		Y:          y,
+		ControlMap: controlMap,
+		LifeCount:  3,
 	}
 }
 

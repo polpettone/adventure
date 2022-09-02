@@ -34,9 +34,9 @@ type CollectBallonsGame struct {
 
 func (g *CollectBallonsGame) Init(engine engine.Engine) {
 
-	g.Player1 = models.NewPlayer(models.PLAYER, 0, 0, "k", "j", "l", "h", "m")
-	g.GameMap = models.NewMap(30, 30)
-	g.Items = initializeItems(1, *g.GameMap, models.BALLON)
+	g.Player1 = models.NewPlayer(models.PLAYER, gameConfig.InitPlayerPos.X, gameConfig.InitPlayerPos.Y, gameConfig.PlayerControlMap)
+	g.GameMap = models.NewMap(gameConfig.MapSize.X, gameConfig.MapSize.Y)
+	g.Items = initializeItems(1, *g.GameMap, gameConfig.ItemSymbol)
 
 	elements := buildElements(g.Items, *g.Player1)
 	g.GameMap.Update(elements)
@@ -99,25 +99,25 @@ func (g CollectBallonsGame) statusLineForPlayer(player models.Player, key string
 func updatePlayer(key string, player *models.Player, g *CollectBallonsGame) {
 	switch key {
 
-	case player.MoveUpKey:
+	case player.ControlMap.Up:
 		if player.Y == g.GameMap.MaxY-1 {
 			return
 		}
 		player.MoveUp()
 
-	case player.MoveRightKey:
+	case player.ControlMap.Right:
 		if player.X == g.GameMap.MaxX-1 {
 			return
 		}
 		player.MoveRight()
 
-	case player.MoveLeftKey:
+	case player.ControlMap.Left:
 		if player.X == 0 {
 			return
 		}
 		player.MoveLeft()
 
-	case player.MoveDownKey:
+	case player.ControlMap.Down:
 		if player.Y == 0 {
 			return
 		}

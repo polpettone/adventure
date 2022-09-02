@@ -28,8 +28,23 @@ type PinguinBurfGame struct {
 
 func (g *PinguinBurfGame) Init(engine engine.Engine) {
 
-	player1 := models.NewPlayer(models.PLAYER, 0, 0, "k", "j", "l", "h", "m")
-	player2 := models.NewPlayer(models.PLAYER2, 29, 29, "w", "s", "d", "a", "x")
+	var player1ControlMap game.ControlMap = game.ControlMap{
+		Up:     "k",
+		Down:   "j",
+		Left:   "h",
+		Right:  "l",
+		Action: "m",
+	}
+
+	var player2ControlMap game.ControlMap = game.ControlMap{
+		Up:     "w",
+		Down:   "s",
+		Left:   "d",
+		Right:  "a",
+		Action: "x",
+	}
+	player1 := models.NewPlayer(models.PLAYER, 0, 0, player1ControlMap)
+	player2 := models.NewPlayer(models.PLAYER2, 29, 29, player2ControlMap)
 
 	enemy := models.NewEnemy(models.PENGUIN, 3, 3)
 	enemyMap := map[uuid.UUID]*models.Enemy{}
@@ -180,7 +195,7 @@ func logElements(elem models.Element) {
 func updatePlayer(key string, player *models.Player, g PinguinBurfGame) {
 	switch key {
 
-	case player.ActionKey:
+	case player.ControlMap.Action:
 		if player.X == g.GameMap.MaxX-1 {
 			return
 		}
@@ -193,25 +208,25 @@ func updatePlayer(key string, player *models.Player, g PinguinBurfGame) {
 		}
 		return
 
-	case player.MoveUpKey:
+	case player.ControlMap.Up:
 		if player.Y == g.GameMap.MaxY-1 {
 			return
 		}
 		player.MoveUp()
 
-	case player.MoveRightKey:
+	case player.ControlMap.Right:
 		if player.X == g.GameMap.MaxX-1 {
 			return
 		}
 		player.MoveRight()
 
-	case player.MoveLeftKey:
+	case player.ControlMap.Left:
 		if player.X == 0 {
 			return
 		}
 		player.MoveLeft()
 
-	case player.MoveDownKey:
+	case player.ControlMap.Down:
 		if player.Y == 0 {
 			return
 		}
