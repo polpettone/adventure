@@ -36,7 +36,7 @@ func (g *CollectBallonsGame) Init(engine engine.Engine) {
 
 	g.Player1 = models.NewPlayer(models.PLAYER, gameConfig.InitPlayerPos.X, gameConfig.InitPlayerPos.Y, gameConfig.PlayerControlMap)
 	g.GameMap = models.NewMap(gameConfig.MapSize.X, gameConfig.MapSize.Y)
-	g.Items = initializeItems(1, *g.GameMap, gameConfig.ItemSymbol)
+	g.Items = initializeItems(gameConfig.ItemCount, *g.GameMap, gameConfig.ItemSymbol)
 
 	elements := buildElements(g.Items, *g.Player1)
 	g.GameMap.Update(elements)
