@@ -75,6 +75,7 @@ func (g CollectBallonsGame) Run() {
 	go impulseGenerator(impulseChannel, GAME_FREQUENCE)
 	go inputKeyReceiver(keyChannel)
 	go inputKeyHandler(keyChannel, impulseChannel, &g)
+	go gameOverHandler(&g)
 
 	select {}
 }
@@ -157,6 +158,17 @@ func updatePlayer(key string, player *models.Player, g *CollectBallonsGame) {
 
 }
 
+func gameOverHandler(g *CollectBallonsGame) {
+
+	for {
+		time.Sleep(time.Second)
+		if g.GameState == GAMEOVER {
+			os.Exit(0)
+		}
+	}
+
+}
+
 func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g *CollectBallonsGame) {
 
 	for {
@@ -175,7 +187,6 @@ func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g *Collec
 			}
 		case <-impulseChannel:
 			g.Update()
-
 		}
 
 	}
