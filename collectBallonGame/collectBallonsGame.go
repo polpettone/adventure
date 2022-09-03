@@ -14,7 +14,7 @@ import (
 	"github.com/polpettone/adventure/models"
 )
 
-const GAME_FREQUENCE time.Duration = time.Second / 10
+const GAME_FREQUENCE time.Duration = time.Second / 20
 
 type GameState int
 
@@ -69,14 +69,15 @@ func (g CollectBallonsGame) Run() {
 	select {}
 }
 
-func (g *CollectBallonsGame) Update(key string) error {
-	updatePlayer(key, g.Player1, g)
+func (g *CollectBallonsGame) Update() error {
 	g.Engine.ClearScreen()
 	g.statusLineForPlayer(*g.Player1, "p1")
 	g.GameMap.Update(g.GetElements())
 	fmt.Println(g.GameMap.Print())
 	logElementStates(g.GetElements())
 	g.checkGameOverCriteria()
+	g.Clock += GAME_FREQUENCE
+	g.GameMap.SetStatusLine("Clock", fmt.Sprintf("%v", g.Clock))
 	return nil
 }
 
@@ -158,14 +159,11 @@ func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g *Collec
 			case "r":
 				fmt.Printf("%s", "reload \n")
 			default:
-				g.Update(key)
+				updatePlayer(key, g.Player1, g)
 			}
 		case <-impulseChannel:
-			g.Clock += GAME_FREQUENCE
-			g.GameMap.SetStatusLine("Clock", fmt.Sprintf("%v", g.Clock))
-			g.Engine.ClearScreen()
-			g.GameMap.Update(g.GetElements())
-			fmt.Println(g.GameMap.Print())
+			g.Update()
+
 		}
 
 	}
