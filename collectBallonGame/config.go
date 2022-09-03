@@ -16,7 +16,7 @@ type GameConfig struct {
 var gameConfig GameConfig = GameConfig{
 
 	MapSize:       game.NewCoord(30, 30),
-	ItemCount:     1,
+	ItemCount:     5,
 	InitPlayerPos: game.NewCoord(0, 0),
 
 	PlayerControlMap: game.ControlMap{

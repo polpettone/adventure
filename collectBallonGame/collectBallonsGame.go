@@ -46,9 +46,19 @@ func (g *CollectBallonsGame) Init(engine engine.Engine) {
 	g.GameState = RUNNING
 }
 
+func countCollectableItems(items map[uuid.UUID]*models.Item) int {
+	c := 0
+	for _, i := range items {
+		if i.Collectable {
+			c++
+		}
+	}
+	return c
+}
+
 func (g *CollectBallonsGame) checkGameOverCriteria() {
 
-	if g.GameState == RUNNING && len(g.Items) == 0 {
+	if g.GameState == RUNNING && countCollectableItems(g.Items) == 0 {
 
 		finishTime := g.Clock
 		g.GameState = GAMEOVER
@@ -131,8 +141,10 @@ func updatePlayer(key string, player *models.Player, g *CollectBallonsGame) {
 
 	case *models.Item:
 		item := g.Items[element.GetID()]
-		if item != nil {
+		if item != nil && item.Collectable {
 			delete(g.Items, item.GetID())
+			kaputtItem := models.NewItem(models.KAPUTT, player.X, player.Y, false)
+			g.Items[kaputtItem.ID] = kaputtItem
 			logging.Log.DebugLog.Printf("Item %s deleted", item.GetID())
 			player.AddItem(*item)
 			logging.Log.DebugLog.Println(player.Items)
@@ -192,7 +204,7 @@ func initializeItems(
 	itemSymbol string) map[uuid.UUID]*models.Item {
 
 	items := []*models.Item{
-		models.NewItem(models.BALLON, 10, 10),
+		models.NewItem(models.BALLON, 10, 10, true),
 	}
 
 	rand.Seed(time.Now().UnixNano())
@@ -206,7 +218,7 @@ func initializeItems(
 	for n := 0; n < count; n++ {
 		x := rand.Intn(maxX-minX+1) + minX
 		y := rand.Intn(maxY-minY+1) + minY
-		items = append(items, models.NewItem(itemSymbol, x, y))
+		items = append(items, models.NewItem(itemSymbol, x, y, true))
 	}
 
 	itemsMap := map[uuid.UUID]*models.Item{}

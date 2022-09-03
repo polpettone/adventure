@@ -5,18 +5,20 @@ import (
 )
 
 type Item struct {
-	Symbol string
-	X      int
-	Y      int
-	ID     uuid.UUID
+	Symbol      string
+	X           int
+	Y           int
+	ID          uuid.UUID
+	Collectable bool
 }
 
-func NewItem(symbol string, x, y int) *Item {
+func NewItem(symbol string, x, y int, collectable bool) *Item {
 	return &Item{
-		ID:     uuid.New(),
-		Symbol: symbol,
-		X:      x,
-		Y:      y,
+		ID:          uuid.New(),
+		Symbol:      symbol,
+		X:           x,
+		Y:           y,
+		Collectable: collectable,
 	}
 }
 

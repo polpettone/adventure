@@ -267,7 +267,7 @@ func updatePlayer(key string, player *models.Player, g PinguinBurfGame) {
 
 func initItems(count int) map[uuid.UUID]*models.Item {
 	items := []*models.Item{
-		models.NewItem(models.BALLON, 10, 10),
+		models.NewItem(models.BALLON, 10, 10, true),
 	}
 
 	rand.Seed(time.Now().UnixNano())
@@ -281,7 +281,7 @@ func initItems(count int) map[uuid.UUID]*models.Item {
 	for n := 0; n < count; n++ {
 		x := rand.Intn(maxX-minX+1) + minX
 		y := rand.Intn(maxY-minY+1) + minY
-		items = append(items, models.NewItem(models.BALLON, x, y))
+		items = append(items, models.NewItem(models.BALLON, x, y, true))
 	}
 
 	itemsMap := map[uuid.UUID]*models.Item{}

@@ -33,3 +33,9 @@ var PLAYER = WHALE
 var PLAYER2 = ELEPHANT
 
 const FIELD_WIDTH = 2
+
+const KAPUTT_SYMBOL = "💢"
+
+var KAPUTT string = KAPUTT_SYMBOL + strings.Repeat(KAPUTT_SYMBOL, FIELD_WIDTH-len(KAPUTT_SYMBOL)+2)
+
+const SYMBOLE = "💘💝💖💗💓💞💕💟❣️💔❤️🧡💛💚💙💜🤎🖤🤍💯💢👁️‍🗨️💬🗨️🗯️💭💤💮♨️💈🛑🕛🕧🕐🕜🕑🕝🕒🕞🕓🕟🕔🕠🕕🕡🕖🕢🕗🕘🕤🕙🕥🕚🕦🌀🃏🀄🎴🔇🔈🔉🔊📢📣📯🔔🔕🎵🎶🚮🚰♿🚹🚺🚻🚼🚾⚠️🚸⛔🚫🚳🚭🚯🚱🔞☢️☣️✖️➕➖➗❓❔❗❕🔴🟠🟡🟢🔵🟣🟤⚫⚪🔘🟥🟧🟨🟩🟦🟪🟫⬛⬜🔳🔲▪️▫️◾️◽️◼️◻️ "
