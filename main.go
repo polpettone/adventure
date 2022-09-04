@@ -12,29 +12,6 @@ func main() {
 	gameSelection()
 }
 
-func startPinguinBurgGame() {
-
-	engine := &engine.EngineOne{}
-	engine.Setup()
-
-	game := &pinguinBurfGame.PinguinBurfGame{}
-	game.Init(engine)
-	game.Run()
-
-}
-
-func startCollectBallonsGame() {
-
-	engine := &engine.EngineOne{}
-	engine.Setup()
-
-	game := &collectBallonGame.CollectBallonsGame{}
-	game.Init(engine)
-
-	game.Run()
-
-}
-
 func gameSelection() {
 
 	engine := &engine.EngineOne{}
