@@ -26,6 +26,10 @@ type PinguinBurfGame struct {
 	Engine engine.Engine
 }
 
+func (g *PinguinBurfGame) GetName() string {
+	return "Pinguin Barf"
+}
+
 func (g *PinguinBurfGame) Init(engine engine.Engine) {
 
 	var player1ControlMap game.ControlMap = game.ControlMap{
@@ -52,11 +56,7 @@ func (g *PinguinBurfGame) Init(engine engine.Engine) {
 
 	itemsMap := initItems(20)
 
-	elements := buildElementsForUpdate(itemsMap, enemyMap, *player1, *player2)
-
 	gameMap := models.NewMap(30, 30)
-
-	gameMap.Update(elements)
 
 	gameMap.SetStatusLine(
 		"player1",
@@ -82,19 +82,15 @@ func (g *PinguinBurfGame) Init(engine engine.Engine) {
 	g.Player2 = player2
 
 	g.Engine = engine
-	g.Engine.ClearScreen()
-
-	fmt.Println(gameMap.Print())
-	logElementStates(elements)
 }
 
-func (g PinguinBurfGame) Run() {
+func (g *PinguinBurfGame) Run() {
 
 	impulseChannel := make(chan bool, 1)
 	keyChannel := make(chan string, 1)
 	go impulseGenerator(impulseChannel, time.Second/10)
 	go inputKeyReceiver(keyChannel)
-	go inputKeyHandler(keyChannel, impulseChannel, &g)
+	go inputKeyHandler(keyChannel, impulseChannel, g)
 
 	select {}
 }
@@ -301,7 +297,7 @@ func inputKeyReceiver(keyChannel chan string) {
 	}
 }
 
-func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g game.Game) {
+func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g *PinguinBurfGame) {
 
 	for {
 		select {

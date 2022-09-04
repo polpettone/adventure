@@ -32,14 +32,15 @@ type CollectBallonsGame struct {
 	GameState GameState
 }
 
+func (g *CollectBallonsGame) GetName() string {
+	return "Collect Ballons"
+}
+
 func (g *CollectBallonsGame) Init(engine engine.Engine) {
 
 	g.Player1 = models.NewPlayer(models.PLAYER, gameConfig.InitPlayerPos.X, gameConfig.InitPlayerPos.Y, gameConfig.PlayerControlMap)
 	g.GameMap = models.NewMap(gameConfig.MapSize.X, gameConfig.MapSize.Y)
 	g.Items = initializeItems(gameConfig.ItemCount, *g.GameMap, gameConfig.ItemSymbol)
-
-	elements := buildElements(g.Items, *g.Player1)
-	g.GameMap.Update(elements)
 
 	g.Clock = 0 * time.Minute
 	g.Engine = engine
