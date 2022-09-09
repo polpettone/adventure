@@ -71,14 +71,19 @@ func (g *CollectBallonsGame) checkGameOverCriteria() {
 
 func (g CollectBallonsGame) Run() {
 
+	gameControlChannel := make(chan bool, 1)
 	impulseChannel := make(chan bool, 1)
 	keyChannel := make(chan string, 1)
-	go impulseGenerator(impulseChannel, GAME_FREQUENCE)
+	go impulseGenerator(impulseChannel, GAME_FREQUENCE, gameControlChannel)
 	go inputKeyReceiver(keyChannel)
-	go inputKeyHandler(keyChannel, impulseChannel, &g)
-	go gameOverHandler(&g)
+	go inputKeyHandler(gameControlChannel, keyChannel, impulseChannel, &g)
+	go gameOverHandler(&g, gameControlChannel)
 
-	select {}
+	select {
+	case <-gameControlChannel:
+		logging.Log.InfoLog.Printf("%s Gameover", g.GetName())
+		return
+	}
 }
 
 func (g *CollectBallonsGame) Update() error {
@@ -159,18 +164,23 @@ func updatePlayer(key string, player *models.Player, g *CollectBallonsGame) {
 
 }
 
-func gameOverHandler(g *CollectBallonsGame) {
+func gameOverHandler(g *CollectBallonsGame, gameControlChannel chan bool) {
 
 	for {
 		time.Sleep(time.Second)
 		if g.GameState == GAMEOVER {
-			os.Exit(0)
+			g.Engine.ClearScreen()
+			gameControlChannel <- true
 		}
 	}
 
 }
 
-func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g *CollectBallonsGame) {
+func inputKeyHandler(
+	gameControlChannel chan bool,
+	keyChannel chan string,
+	impulseChannel chan bool,
+	g *CollectBallonsGame) {
 
 	for {
 		select {
@@ -179,10 +189,7 @@ func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g *Collec
 
 			switch key {
 			case "q":
-				fmt.Printf("%s", "bye bye")
-				os.Exit(0)
-			case "r":
-				fmt.Printf("%s", "reload \n")
+				gameControlChannel <- true
 			default:
 				updatePlayer(key, g.Player1, g)
 			}
@@ -194,10 +201,21 @@ func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g *Collec
 
 }
 
-func impulseGenerator(impulseChannel chan bool, frequence time.Duration) {
+func impulseGenerator(
+	impulseChannel chan bool,
+	frequence time.Duration,
+	gameControlChannel chan bool) {
 	for {
 		impulseChannel <- true
 		time.Sleep(frequence)
+
+		select {
+		case <-gameControlChannel:
+
+			logging.Log.InfoLog.Println("Stop Impulse Generator")
+			return
+		default:
+		}
 	}
 }
 
