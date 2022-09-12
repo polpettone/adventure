@@ -129,7 +129,7 @@ func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g *GameSe
 						logging.Log.InfoLog.Printf("Menu State %d ", g.State)
 						v.Game.Run()
 						// TODO:
-						// Restarts games currently working due
+						// Restarts games currently not working due
 						// a problem with the game selection
 						// after fun game finished
 						// temporaly quit whole program
