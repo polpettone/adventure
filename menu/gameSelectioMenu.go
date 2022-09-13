@@ -12,8 +12,6 @@ import (
 	"github.com/polpettone/adventure/logging"
 )
 
-const FREQUENCE time.Duration = time.Second / 20
-
 type MenuEntry struct {
 	SelectioValue string
 	Selected      bool
@@ -63,12 +61,54 @@ func (g *GameSelectionMenu) Run() {
 	fmt.Println(g.Print())
 
 	keyChannel := make(chan string, 1)
-	impulseChannel := make(chan bool, 1)
 
 	go inputKeyReceiver(keyChannel)
-	go inputKeyHandler(keyChannel, impulseChannel, g)
-	go impulseGenerator(impulseChannel, FREQUENCE)
+	go inputKeyHandler(keyChannel, g)
 	select {}
+}
+
+func inputKeyReceiver(keyChannel chan string) {
+	var b []byte = make([]byte, 1)
+	for {
+		os.Stdin.Read(b)
+		i := string(b)
+		logging.Log.InfoLog.Printf("%s inputKeyReceiver", i)
+		keyChannel <- i
+	}
+}
+
+func inputKeyHandler(keyChannel chan string, g *GameSelectionMenu) {
+
+	for {
+		select {
+
+		case key := <-keyChannel:
+
+			logging.Log.InfoLog.Printf("%s pressed", key)
+
+			if g.State == WAIT_FOR_SELECTION {
+				switch key {
+
+				case "q":
+					fmt.Printf("%s", "bye bye")
+					os.Exit(0)
+				default:
+					if v, ok := g.Entries[key]; ok {
+						g.State = GAME_IS_RUNNING
+						v.Game.Run()
+						g.State = WAIT_FOR_SELECTION
+						time.Sleep(3 * time.Second)
+						logging.Log.InfoLog.Println("Print Selection ")
+						g.Engine.ClearScreen()
+						fmt.Println(g.Print())
+					} else {
+						fmt.Printf("No Entry for %s\n", key)
+					}
+				}
+			}
+		default:
+		}
+	}
 }
 
 func (v GameSelectionMenu) Print() string {
@@ -80,15 +120,6 @@ func (v GameSelectionMenu) Print() string {
 		keys = append(keys, k)
 	}
 
-	logging.Log.DebugLog.Println("-----------")
-	logging.Log.DebugLog.Println(keys)
-	logging.Log.DebugLog.Println(keys)
-	logging.Log.DebugLog.Println("-----------")
-
-	logging.Log.DebugLog.Println("-----------")
-	logging.Log.DebugLog.Println(v.Entries)
-	logging.Log.DebugLog.Println("-----------")
-
 	sort.Strings(keys)
 	for _, k := range keys {
 		if _, ok := v.Entries[k]; ok {
@@ -98,63 +129,4 @@ func (v GameSelectionMenu) Print() string {
 		}
 	}
 	return s
-}
-
-func inputKeyReceiver(keyChannel chan string) {
-	var b []byte = make([]byte, 1)
-	for {
-		os.Stdin.Read(b)
-		i := string(b)
-		keyChannel <- i
-	}
-}
-
-func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g *GameSelectionMenu) {
-
-	for {
-		if g.State == WAIT_FOR_SELECTION {
-			select {
-
-			case key := <-keyChannel:
-
-				logging.Log.InfoLog.Printf("%s pressed", key)
-				switch key {
-
-				case "q":
-					fmt.Printf("%s", "bye bye")
-					os.Exit(0)
-				default:
-					if v, ok := g.Entries[key]; ok {
-						g.State = GAME_IS_RUNNING
-						logging.Log.InfoLog.Printf("Menu State %d ", g.State)
-						v.Game.Run()
-						// TODO:
-						// Restarts games currently not working due
-						// a problem with the game selection
-						// after fun game finished
-						// temporaly quit whole program
-						// after finishing a game
-						os.Exit(0)
-						g.State = WAIT_FOR_SELECTION
-						logging.Log.InfoLog.Printf("Menu State %d ", g.State)
-					} else {
-						fmt.Printf("No Entry for %s", key)
-					}
-				}
-			case <-impulseChannel:
-				g.Engine.ClearScreen()
-				fmt.Println(g.Print())
-
-			default:
-			}
-		}
-	}
-}
-func impulseGenerator(
-	impulseChannel chan bool,
-	frequence time.Duration) {
-	for {
-		impulseChannel <- true
-		time.Sleep(frequence)
-	}
 }

@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/polpettone/adventure/collectBallonGame"
+	"github.com/polpettone/adventure/dummyGame"
 	"github.com/polpettone/adventure/engine"
 	"github.com/polpettone/adventure/game"
 	"github.com/polpettone/adventure/menu"
@@ -23,9 +24,13 @@ func gameSelection() {
 	pinguinBarfGame := &pinguinBurfGame.PinguinBurfGame{}
 	pinguinBarfGame.Init(engine)
 
+	dummyGame := &dummyGame.DummyGame{}
+	dummyGame.Init(engine)
+
 	games := []game.Game{
 		collectBallonGame,
 		pinguinBarfGame,
+		dummyGame,
 	}
 
 	menu := menu.NewGameSelectionMenu(engine, games)
