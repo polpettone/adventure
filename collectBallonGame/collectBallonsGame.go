@@ -195,6 +195,7 @@ func inputKeyHandler(
 			}
 		case <-impulseChannel:
 			g.Update()
+		default:
 		}
 
 	}

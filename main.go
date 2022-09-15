@@ -10,7 +10,18 @@ import (
 )
 
 func main() {
-	gameSelection()
+	startDummyGame()
+}
+
+func startDummyGame() {
+
+	engine := &engine.EngineOne{}
+	engine.Setup()
+
+	dummyGame := &dummyGame.DummyGame{}
+	dummyGame.Init(engine)
+
+	dummyGame.Run()
 }
 
 func gameSelection() {

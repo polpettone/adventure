@@ -79,6 +79,7 @@ func inputKeyReceiver(keyChannel chan string) {
 
 func inputKeyHandler(keyChannel chan string, g *GameSelectionMenu) {
 
+	//pprof.Lookup("goroutine").WriteTo(logging.Log.DebugLog.Writer(), 1)
 	for {
 		select {
 
