@@ -45,7 +45,15 @@ func (g *DummyGame) Run() {
 	go g.impulseGenerator()
 	go g.gameHandler()
 	go g.inputKeyReceiver()
-	select {}
+	select {
+
+	case _, ok := <-g.StopChannel:
+		if !ok {
+			logging.Log.InfoLog.Println("Run Game finished")
+			return
+		}
+
+	}
 
 }
 
