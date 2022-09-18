@@ -5,7 +5,6 @@ import (
 	"os"
 	"sort"
 	"strconv"
-	"time"
 
 	"github.com/polpettone/adventure/engine"
 	"github.com/polpettone/adventure/game"
@@ -18,18 +17,21 @@ type MenuEntry struct {
 	Game          game.Game
 }
 
-type GameSelectionMenu struct {
-	Engine  engine.Engine
-	Entries map[string]*MenuEntry
-	State   MenuState
-}
-
 type MenuState int
 
 const (
 	GAME_IS_RUNNING = iota
 	WAIT_FOR_SELECTION
 )
+
+type GameSelectionMenu struct {
+	Engine  engine.Engine
+	Entries map[string]*MenuEntry
+	State   MenuState
+
+	StopChannel chan struct{}
+	KeyChannel  chan string
+}
 
 func NewGameSelectionMenu(engine engine.Engine, games []game.Game) *GameSelectionMenu {
 
@@ -51,6 +53,9 @@ func NewGameSelectionMenu(engine engine.Engine, games []game.Game) *GameSelectio
 		Engine:  engine,
 		Entries: entries,
 		State:   WAIT_FOR_SELECTION,
+
+		StopChannel: make(chan struct{}),
+		KeyChannel:  make(chan string, 1),
 	}
 
 	return m
@@ -60,30 +65,47 @@ func (g *GameSelectionMenu) Run() {
 
 	fmt.Println(g.Print())
 
-	keyChannel := make(chan string, 1)
+	go g.inputKeyReceiver()
+	go g.inputKeyHandler()
 
-	go inputKeyReceiver(keyChannel)
-	go inputKeyHandler(keyChannel, g)
-	select {}
-}
+	select {
 
-func inputKeyReceiver(keyChannel chan string) {
-	var b []byte = make([]byte, 1)
-	for {
-		os.Stdin.Read(b)
-		i := string(b)
-		logging.Log.InfoLog.Printf("%s inputKeyReceiver", i)
-		keyChannel <- i
+	case _, ok := <-g.StopChannel:
+		if !ok {
+			logging.Log.InfoLog.Println("Finished Game Menu")
+			return
+		}
+
 	}
 }
 
-func inputKeyHandler(keyChannel chan string, g *GameSelectionMenu) {
+func (g *GameSelectionMenu) inputKeyReceiver() {
+	var b []byte = make([]byte, 1)
+	for {
+
+		select {
+		case _, ok := <-g.StopChannel:
+			if !ok {
+				logging.Log.InfoLog.Println("Input KeyReceiver stopped")
+				return
+			}
+
+		default:
+
+			os.Stdin.Read(b)
+			i := string(b)
+			g.KeyChannel <- i
+		}
+	}
+}
+
+func (g *GameSelectionMenu) inputKeyHandler() {
 
 	//pprof.Lookup("goroutine").WriteTo(logging.Log.DebugLog.Writer(), 1)
 	for {
 		select {
 
-		case key := <-keyChannel:
+		case key := <-g.KeyChannel:
 
 			logging.Log.InfoLog.Printf("%s pressed", key)
 
@@ -92,16 +114,24 @@ func inputKeyHandler(keyChannel chan string, g *GameSelectionMenu) {
 
 				case "q":
 					fmt.Printf("%s", "bye bye")
+					close(g.StopChannel)
+					close(g.KeyChannel)
 					os.Exit(0)
 				default:
 					if v, ok := g.Entries[key]; ok {
 						g.State = GAME_IS_RUNNING
+
+						logging.Log.InfoLog.Println("Run Game")
+						v.Game.Init(g.Engine)
 						v.Game.Run()
+						logging.Log.InfoLog.Println("Game finished")
+
 						g.State = WAIT_FOR_SELECTION
-						time.Sleep(3 * time.Second)
+
 						logging.Log.InfoLog.Println("Print Selection ")
 						g.Engine.ClearScreen()
 						fmt.Println(g.Print())
+
 					} else {
 						fmt.Printf("No Entry for %s\n", key)
 					}
@@ -112,21 +142,21 @@ func inputKeyHandler(keyChannel chan string, g *GameSelectionMenu) {
 	}
 }
 
-func (v GameSelectionMenu) Print() string {
+func (g GameSelectionMenu) Print() string {
 	s := fmt.Sprintln("Choose a game by pressing a number")
 
-	keys := make([]string, len(v.Entries))
+	keys := make([]string, len(g.Entries))
 
-	for k := range v.Entries {
+	for k := range g.Entries {
 		keys = append(keys, k)
 	}
 
 	sort.Strings(keys)
 	for _, k := range keys {
-		if _, ok := v.Entries[k]; ok {
+		if _, ok := g.Entries[k]; ok {
 			s += fmt.Sprintf("%s)  %s \n",
-				v.Entries[k].SelectioValue,
-				v.Entries[k].Game.GetName())
+				g.Entries[k].SelectioValue,
+				g.Entries[k].Game.GetName())
 		}
 	}
 	return s

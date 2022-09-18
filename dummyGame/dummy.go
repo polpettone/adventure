@@ -19,9 +19,10 @@ type DummyGame struct {
 	ImpulseChannel chan bool
 	StopChannel    chan struct{}
 	KeyChannel     chan string
-	Frequence      time.Duration
-	Ctx            context.Context
-	Cancel         context.CancelFunc
+
+	Frequence time.Duration
+	Ctx       context.Context
+	Cancel    context.CancelFunc
 
 	View string
 }
@@ -31,6 +32,7 @@ func (g *DummyGame) GetName() string {
 }
 
 func (g *DummyGame) Init(engine engine.Engine) {
+	logging.Log.InfoLog.Println("Init")
 	g.Engine = engine
 	g.Clock = 0
 	g.Ctx, g.Cancel = context.WithCancel(context.Background())
@@ -117,6 +119,7 @@ func (g *DummyGame) impulseGenerator() {
 }
 
 func (g *DummyGame) inputKeyReceiver() {
+	logging.Log.InfoLog.Println("Start InputKeyReceiver")
 	var b []byte = make([]byte, 1)
 	for {
 
@@ -126,6 +129,7 @@ func (g *DummyGame) inputKeyReceiver() {
 				logging.Log.InfoLog.Println("Input KeyReceiver stopped")
 				return
 			}
+
 		default:
 			os.Stdin.Read(b)
 			i := string(b)

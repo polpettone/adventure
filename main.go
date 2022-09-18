@@ -10,7 +10,7 @@ import (
 )
 
 func main() {
-	startDummyGame()
+	gameSelection()
 }
 
 func startDummyGame() {
@@ -19,6 +19,7 @@ func startDummyGame() {
 	engine.Setup()
 
 	dummyGame := &dummyGame.DummyGame{}
+
 	dummyGame.Init(engine)
 
 	dummyGame.Run()
@@ -30,13 +31,10 @@ func gameSelection() {
 	engine.Setup()
 
 	collectBallonGame := &collectBallonGame.CollectBallonsGame{}
-	collectBallonGame.Init(engine)
 
 	pinguinBarfGame := &pinguinBurfGame.PinguinBurfGame{}
-	pinguinBarfGame.Init(engine)
 
 	dummyGame := &dummyGame.DummyGame{}
-	dummyGame.Init(engine)
 
 	games := []game.Game{
 		collectBallonGame,
