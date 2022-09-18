@@ -1,9 +1,9 @@
 package dummyGame
 
 import (
-	"context"
 	"fmt"
 	"os"
+	"sync"
 	"time"
 
 	"github.com/polpettone/adventure/engine"
@@ -21,8 +21,6 @@ type DummyGame struct {
 	KeyChannel     chan string
 
 	Frequence time.Duration
-	Ctx       context.Context
-	Cancel    context.CancelFunc
 
 	View string
 }
@@ -35,7 +33,7 @@ func (g *DummyGame) Init(engine engine.Engine) {
 	logging.Log.InfoLog.Println("Init")
 	g.Engine = engine
 	g.Clock = 0
-	g.Ctx, g.Cancel = context.WithCancel(context.Background())
+
 	g.ImpulseChannel = make(chan bool, 1)
 	g.StopChannel = make(chan struct{})
 	g.KeyChannel = make(chan string, 1)
@@ -44,22 +42,21 @@ func (g *DummyGame) Init(engine engine.Engine) {
 
 func (g *DummyGame) Run() {
 
-	go g.impulseGenerator()
-	go g.gameHandler()
-	go g.inputKeyReceiver()
-	select {
+	wg := new(sync.WaitGroup)
+	wg.Add(3)
 
-	case _, ok := <-g.StopChannel:
-		if !ok {
-			logging.Log.InfoLog.Println("Run Game finished")
-			return
-		}
+	go g.inputKeyReceiver(wg)
+	go g.impulseGenerator(wg)
+	go g.gameHandler(wg)
 
-	}
+	wg.Wait()
+	close(g.KeyChannel)
+	logging.Log.InfoLog.Println("Run Game finished")
 
 }
 
-func (g *DummyGame) gameHandler() {
+func (g *DummyGame) gameHandler(wg *sync.WaitGroup) {
+	defer wg.Done()
 
 	logging.Log.InfoLog.Println("Start gameHandler")
 	for {
@@ -74,9 +71,9 @@ func (g *DummyGame) gameHandler() {
 			case "a":
 				g.View = fmt.Sprintf("%s pressed. Stop \n", key)
 				logging.Log.InfoLog.Println("Close all channels")
+				g.StopChannel <- struct{}{}
 				close(g.StopChannel)
 				close(g.ImpulseChannel)
-				close(g.KeyChannel)
 				return
 			default:
 				g.View = fmt.Sprintf("%s pressed \n", key)
@@ -95,14 +92,8 @@ func (g *DummyGame) gameHandler() {
 	}
 }
 
-func (g *DummyGame) Print() string {
-	s := "Dummy Game \n"
-	s += fmt.Sprintf("%s", g.View)
-	s += fmt.Sprintf("%s", g.Clock.String())
-	return s
-}
-
-func (g *DummyGame) impulseGenerator() {
+func (g *DummyGame) impulseGenerator(wg *sync.WaitGroup) {
+	defer wg.Done()
 	logging.Log.InfoLog.Println("Start ImpulseGenrator")
 	for {
 		select {
@@ -118,7 +109,8 @@ func (g *DummyGame) impulseGenerator() {
 	}
 }
 
-func (g *DummyGame) inputKeyReceiver() {
+func (g *DummyGame) inputKeyReceiver(wg *sync.WaitGroup) {
+	defer wg.Done()
 	logging.Log.InfoLog.Println("Start InputKeyReceiver")
 	var b []byte = make([]byte, 1)
 	for {
@@ -131,10 +123,17 @@ func (g *DummyGame) inputKeyReceiver() {
 			}
 
 		default:
+			//take care, this will block until key pressed
 			os.Stdin.Read(b)
 			i := string(b)
 			g.KeyChannel <- i
-
 		}
 	}
+}
+
+func (g *DummyGame) Print() string {
+	s := "Dummy Game \n"
+	s += fmt.Sprintf("%s", g.View)
+	s += fmt.Sprintf("%s", g.Clock.String())
+	return s
 }
