@@ -38,6 +38,7 @@ func (g *DummyGame) Init(engine engine.Engine) {
 	g.DoneChannel = make(chan struct{})
 	g.KeyChannel = make(chan string, 1)
 	g.Frequence = GAME_FREQUENCE
+
 }
 
 func (g *DummyGame) Run() {

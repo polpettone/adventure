@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"os"
 	"reflect"
+	"sync"
 	"text/tabwriter"
 	"time"
 
@@ -30,6 +31,12 @@ type CollectBallonsGame struct {
 	Engine    engine.Engine
 	Clock     time.Duration
 	GameState GameState
+
+	ImpulseChannel chan bool
+	DoneChannel    chan struct{}
+	KeyChannel     chan string
+
+	Frequence time.Duration
 }
 
 func (g *CollectBallonsGame) GetName() string {
@@ -38,13 +45,22 @@ func (g *CollectBallonsGame) GetName() string {
 
 func (g *CollectBallonsGame) Init(engine engine.Engine) {
 
-	g.Player1 = models.NewPlayer(models.PLAYER, gameConfig.InitPlayerPos.X, gameConfig.InitPlayerPos.Y, gameConfig.PlayerControlMap)
+	g.Player1 = models.NewPlayer(models.PLAYER,
+		gameConfig.InitPlayerPos.X,
+		gameConfig.InitPlayerPos.Y,
+		gameConfig.PlayerControlMap)
 	g.GameMap = models.NewMap(gameConfig.MapSize.X, gameConfig.MapSize.Y)
 	g.Items = initializeItems(gameConfig.ItemCount, *g.GameMap, gameConfig.ItemSymbol)
 
 	g.Clock = 0 * time.Minute
 	g.Engine = engine
 	g.GameState = RUNNING
+
+	g.ImpulseChannel = make(chan bool, 1)
+	g.DoneChannel = make(chan struct{})
+	g.KeyChannel = make(chan string, 1)
+	g.Frequence = GAME_FREQUENCE
+
 }
 
 func countCollectableItems(items map[uuid.UUID]*models.Item) int {
@@ -69,21 +85,20 @@ func (g *CollectBallonsGame) checkGameOverCriteria() {
 	}
 }
 
-func (g CollectBallonsGame) Run() {
+func (g *CollectBallonsGame) Run() {
 
-	gameControlChannel := make(chan bool, 1)
-	impulseChannel := make(chan bool, 1)
-	keyChannel := make(chan string, 1)
-	go impulseGenerator(impulseChannel, GAME_FREQUENCE, gameControlChannel)
-	go inputKeyReceiver(keyChannel)
-	go inputKeyHandler(gameControlChannel, keyChannel, impulseChannel, &g)
-	go gameOverHandler(&g, gameControlChannel)
+	wg := new(sync.WaitGroup)
+	wg.Add(4)
 
-	select {
-	case <-gameControlChannel:
-		logging.Log.InfoLog.Printf("%s Gameover", g.GetName())
-		return
-	}
+	go g.impulseGenerator(wg)
+	go g.inputKeyReceiver(wg)
+	go g.inputKeyHandler(wg)
+	go g.gameOverHandler(wg)
+
+	wg.Wait()
+	close(g.KeyChannel)
+	logging.Log.InfoLog.Printf("%s Gameover", g.GetName())
+
 }
 
 func (g *CollectBallonsGame) Update() error {
@@ -164,36 +179,47 @@ func updatePlayer(key string, player *models.Player, g *CollectBallonsGame) {
 
 }
 
-func gameOverHandler(g *CollectBallonsGame, gameControlChannel chan bool) {
+func (g *CollectBallonsGame) gameOverHandler(wg *sync.WaitGroup) {
+
+	defer wg.Done()
 
 	for {
 		time.Sleep(time.Second)
 		if g.GameState == GAMEOVER {
 			g.Engine.ClearScreen()
-			gameControlChannel <- true
+			g.DoneChannel <- struct{}{}
+			return
 		}
 	}
 
 }
 
-func inputKeyHandler(
-	gameControlChannel chan bool,
-	keyChannel chan string,
-	impulseChannel chan bool,
-	g *CollectBallonsGame) {
+func (g *CollectBallonsGame) inputKeyHandler(wg *sync.WaitGroup) {
+	defer wg.Done()
 
 	for {
 		select {
 
-		case key := <-keyChannel:
-
+		case key, ok := <-g.KeyChannel:
+			if !ok {
+				logging.Log.InfoLog.Println("KeyChannel Closed, leave gameHandler")
+				return
+			}
 			switch key {
 			case "q":
-				gameControlChannel <- true
+				//TODO: check
+				g.DoneChannel <- struct{}{}
+				close(g.DoneChannel)
+				close(g.ImpulseChannel)
 			default:
 				updatePlayer(key, g.Player1, g)
 			}
-		case <-impulseChannel:
+
+		case _, ok := <-g.ImpulseChannel:
+			if !ok {
+				logging.Log.InfoLog.Println("ImpulseChannel Closed, leave gameHandler")
+				return
+			}
 			g.Update()
 		default:
 		}
@@ -202,30 +228,41 @@ func inputKeyHandler(
 
 }
 
-func impulseGenerator(
-	impulseChannel chan bool,
-	frequence time.Duration,
-	gameControlChannel chan bool) {
+func (g *CollectBallonsGame) impulseGenerator(wg *sync.WaitGroup) {
+	defer wg.Done()
 	for {
-		impulseChannel <- true
-		time.Sleep(frequence)
-
 		select {
-		case <-gameControlChannel:
-
-			logging.Log.InfoLog.Println("Stop Impulse Generator")
-			return
+		case _, ok := <-g.DoneChannel:
+			if !ok {
+				logging.Log.InfoLog.Println("Stop Impulse Generator")
+				return
+			}
 		default:
+			g.ImpulseChannel <- true
+			time.Sleep(g.Frequence)
 		}
 	}
 }
 
-func inputKeyReceiver(keyChannel chan string) {
+func (g *CollectBallonsGame) inputKeyReceiver(wg *sync.WaitGroup) {
+	defer wg.Done()
+	logging.Log.InfoLog.Println("Start InputKeyReceiver")
 	var b []byte = make([]byte, 1)
 	for {
-		os.Stdin.Read(b)
-		i := string(b)
-		keyChannel <- i
+
+		select {
+		case _, ok := <-g.DoneChannel:
+			if !ok {
+				logging.Log.InfoLog.Println("Input KeyReceiver stopped")
+				return
+			}
+
+		default:
+			//take care, this will block until key pressed
+			os.Stdin.Read(b)
+			i := string(b)
+			g.KeyChannel <- i
+		}
 	}
 }
 
