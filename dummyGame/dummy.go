@@ -17,7 +17,7 @@ type DummyGame struct {
 	Clock  time.Duration
 
 	ImpulseChannel chan bool
-	StopChannel    chan struct{}
+	DoneChannel    chan struct{}
 	KeyChannel     chan string
 
 	Frequence time.Duration
@@ -35,7 +35,7 @@ func (g *DummyGame) Init(engine engine.Engine) {
 	g.Clock = 0
 
 	g.ImpulseChannel = make(chan bool, 1)
-	g.StopChannel = make(chan struct{})
+	g.DoneChannel = make(chan struct{})
 	g.KeyChannel = make(chan string, 1)
 	g.Frequence = GAME_FREQUENCE
 }
@@ -71,8 +71,8 @@ func (g *DummyGame) gameHandler(wg *sync.WaitGroup) {
 			case "a":
 				g.View = fmt.Sprintf("%s pressed. Stop \n", key)
 				logging.Log.InfoLog.Println("Close all channels")
-				g.StopChannel <- struct{}{}
-				close(g.StopChannel)
+				g.DoneChannel <- struct{}{}
+				close(g.DoneChannel)
 				close(g.ImpulseChannel)
 				return
 			default:
@@ -97,7 +97,7 @@ func (g *DummyGame) impulseGenerator(wg *sync.WaitGroup) {
 	logging.Log.InfoLog.Println("Start ImpulseGenrator")
 	for {
 		select {
-		case _, ok := <-g.StopChannel:
+		case _, ok := <-g.DoneChannel:
 			if !ok {
 				logging.Log.InfoLog.Println("Impulse Generator stopped")
 				return
@@ -116,7 +116,7 @@ func (g *DummyGame) inputKeyReceiver(wg *sync.WaitGroup) {
 	for {
 
 		select {
-		case _, ok := <-g.StopChannel:
+		case _, ok := <-g.DoneChannel:
 			if !ok {
 				logging.Log.InfoLog.Println("Input KeyReceiver stopped")
 				return

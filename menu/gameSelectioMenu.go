@@ -29,7 +29,7 @@ type GameSelectionMenu struct {
 	Entries map[string]*MenuEntry
 	State   MenuState
 
-	StopChannel chan struct{}
+	DoneChannel chan struct{}
 	KeyChannel  chan string
 }
 
@@ -54,7 +54,7 @@ func NewGameSelectionMenu(engine engine.Engine, games []game.Game) *GameSelectio
 		Entries: entries,
 		State:   WAIT_FOR_SELECTION,
 
-		StopChannel: make(chan struct{}),
+		DoneChannel: make(chan struct{}),
 		KeyChannel:  make(chan string, 1),
 	}
 
@@ -70,7 +70,7 @@ func (g *GameSelectionMenu) Run() {
 
 	select {
 
-	case _, ok := <-g.StopChannel:
+	case _, ok := <-g.DoneChannel:
 		if !ok {
 			logging.Log.InfoLog.Println("Finished Game Menu")
 			return
@@ -82,9 +82,8 @@ func (g *GameSelectionMenu) Run() {
 func (g *GameSelectionMenu) inputKeyReceiver() {
 	var b []byte = make([]byte, 1)
 	for {
-
 		select {
-		case _, ok := <-g.StopChannel:
+		case _, ok := <-g.DoneChannel:
 			if !ok {
 				logging.Log.InfoLog.Println("Input KeyReceiver stopped")
 				return
@@ -114,7 +113,7 @@ func (g *GameSelectionMenu) inputKeyHandler() {
 
 				case "q":
 					fmt.Printf("%s", "bye bye")
-					close(g.StopChannel)
+					close(g.DoneChannel)
 					close(g.KeyChannel)
 					os.Exit(0)
 				default:
