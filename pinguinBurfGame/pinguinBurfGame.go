@@ -18,10 +18,19 @@ import (
 
 const GAME_FREQUENCE time.Duration = time.Second / 20
 
+type GameState int
+
+const (
+	RUNNING GameState = iota
+	GAMEOVER
+)
+
 type PinguinBurfGame struct {
 	GameMap *models.Map
 	Player1 *models.Player
 	Player2 *models.Player
+
+	GameState GameState
 
 	Items   map[uuid.UUID]*models.Item
 	Enemies map[uuid.UUID]*models.Enemy
@@ -35,11 +44,39 @@ type PinguinBurfGame struct {
 	Frequence time.Duration
 }
 
+func (g PinguinBurfGame) checkPlayerLifes() (*models.Player, bool) {
+
+	if g.Player1.LifeCount == 0 {
+		return g.Player1, true
+	}
+
+	if g.Player2.LifeCount == 0 {
+		return g.Player2, true
+	}
+
+	return nil, false
+}
+
+func (g *PinguinBurfGame) checkGameOverCriteria() {
+
+	player, dead := g.checkPlayerLifes()
+
+	if g.GameState == RUNNING && dead {
+
+		g.GameState = GAMEOVER
+		g.GameMap.SetStatusLine(
+			"Gameover",
+			fmt.Sprintf("GameOver \n %s is dead. \n Press q to go to main menu", player.Symbol))
+	}
+}
+
 func (g *PinguinBurfGame) GetName() string {
 	return "Pinguin Barf"
 }
 
 func (g *PinguinBurfGame) Init(engine engine.Engine) {
+
+	g.GameState = RUNNING
 
 	var player1ControlMap game.ControlMap = game.ControlMap{
 		Up:     "k",
@@ -52,8 +89,8 @@ func (g *PinguinBurfGame) Init(engine engine.Engine) {
 	var player2ControlMap game.ControlMap = game.ControlMap{
 		Up:     "w",
 		Down:   "s",
-		Left:   "d",
-		Right:  "a",
+		Left:   "a",
+		Right:  "d",
 		Action: "x",
 	}
 	player1 := models.NewPlayer(models.PLAYER, 0, 0, player1ControlMap)
@@ -142,6 +179,8 @@ func (g PinguinBurfGame) UpdateEnemies() {
 
 	g.statusLineForPlayer(*g.Player1, "p1")
 	g.statusLineForPlayer(*g.Player2, "p2")
+
+	g.checkGameOverCriteria()
 
 	fmt.Println(g.GameMap.Print())
 
