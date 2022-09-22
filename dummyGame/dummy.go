@@ -38,7 +38,6 @@ func (g *DummyGame) Init(engine engine.Engine) {
 	g.DoneChannel = make(chan struct{})
 	g.KeyChannel = make(chan string, 1)
 	g.Frequence = GAME_FREQUENCE
-
 }
 
 func (g *DummyGame) Run() {
@@ -72,7 +71,6 @@ func (g *DummyGame) gameHandler(wg *sync.WaitGroup) {
 			case "a":
 				g.View = fmt.Sprintf("%s pressed. Stop \n", key)
 				logging.Log.InfoLog.Println("Close all channels")
-				g.DoneChannel <- struct{}{}
 				close(g.DoneChannel)
 				close(g.ImpulseChannel)
 				return

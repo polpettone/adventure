@@ -49,6 +49,7 @@ func (g *CollectBallonsGame) Init(engine engine.Engine) {
 		gameConfig.InitPlayerPos.X,
 		gameConfig.InitPlayerPos.Y,
 		gameConfig.PlayerControlMap)
+
 	g.GameMap = models.NewMap(gameConfig.MapSize.X, gameConfig.MapSize.Y)
 	g.Items = initializeItems(gameConfig.ItemCount, *g.GameMap, gameConfig.ItemSymbol)
 
@@ -81,7 +82,8 @@ func (g *CollectBallonsGame) checkGameOverCriteria() {
 		g.GameState = GAMEOVER
 		g.GameMap.SetStatusLine(
 			"Gameover",
-			fmt.Sprintf("All Ballons collected in %v. GameOver", finishTime))
+			fmt.Sprintf("All Ballons collected in %v. GameOver. Press q to go to main menu",
+				finishTime))
 	}
 }
 
@@ -187,7 +189,6 @@ func (g *CollectBallonsGame) gameOverHandler(wg *sync.WaitGroup) {
 		time.Sleep(time.Second)
 		if g.GameState == GAMEOVER {
 			g.Engine.ClearScreen()
-			g.DoneChannel <- struct{}{}
 			return
 		}
 	}
@@ -208,7 +209,6 @@ func (g *CollectBallonsGame) inputKeyHandler(wg *sync.WaitGroup) {
 			switch key {
 			case "q":
 				//TODO: check
-				g.DoneChannel <- struct{}{}
 				close(g.DoneChannel)
 				close(g.ImpulseChannel)
 			default:
