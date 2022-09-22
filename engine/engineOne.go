@@ -22,19 +22,21 @@ func (e EngineOne) ClearScreen() {
 	fmt.Print("\033[H\033[2J")
 }
 
-func (e *EngineOne) Setup() {
+func (e *EngineOne) Setup(soundOn bool) {
 	setupShellSettings()
 
-	err := initSpeakerWithDummySound()
-	if err != nil {
-		log.Fatal(err)
-	}
+	if soundOn {
+		err := initSpeakerWithDummySound()
+		if err != nil {
+			log.Fatal(err)
+		}
 
-	sounds, err := initSound()
-	if err != nil {
-		log.Fatal(err)
+		sounds, err := initSound()
+		if err != nil {
+			log.Fatal(err)
+		}
+		e.sounds = sounds
 	}
-	e.sounds = sounds
 }
 
 func setupShellSettings() {

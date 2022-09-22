@@ -16,7 +16,7 @@ func main() {
 func startDummyGame() {
 
 	engine := &engine.EngineOne{}
-	engine.Setup()
+	engine.Setup(false)
 
 	dummyGame := &dummyGame.DummyGame{}
 
@@ -28,7 +28,7 @@ func startDummyGame() {
 func gameSelection() {
 
 	engine := &engine.EngineOne{}
-	engine.Setup()
+	engine.Setup(false)
 
 	collectBallonGame := &collectBallonGame.CollectBallonsGame{}
 

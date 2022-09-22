@@ -16,7 +16,7 @@ type DummyGame struct {
 	Engine engine.Engine
 	Clock  time.Duration
 
-	ImpulseChannel chan bool
+	ImpulseChannel chan struct{}
 	DoneChannel    chan struct{}
 	KeyChannel     chan string
 
@@ -34,7 +34,7 @@ func (g *DummyGame) Init(engine engine.Engine) {
 	g.Engine = engine
 	g.Clock = 0
 
-	g.ImpulseChannel = make(chan bool, 1)
+	g.ImpulseChannel = make(chan struct{})
 	g.DoneChannel = make(chan struct{})
 	g.KeyChannel = make(chan string, 1)
 	g.Frequence = GAME_FREQUENCE
@@ -102,7 +102,7 @@ func (g *DummyGame) impulseGenerator(wg *sync.WaitGroup) {
 				return
 			}
 		default:
-			g.ImpulseChannel <- true
+			g.ImpulseChannel <- struct{}{}
 			time.Sleep(g.Frequence)
 		}
 	}

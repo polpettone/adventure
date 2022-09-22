@@ -32,7 +32,7 @@ type CollectBallonsGame struct {
 	Clock     time.Duration
 	GameState GameState
 
-	ImpulseChannel chan bool
+	ImpulseChannel chan struct{}
 	DoneChannel    chan struct{}
 	KeyChannel     chan string
 
@@ -57,7 +57,7 @@ func (g *CollectBallonsGame) Init(engine engine.Engine) {
 	g.Engine = engine
 	g.GameState = RUNNING
 
-	g.ImpulseChannel = make(chan bool, 1)
+	g.ImpulseChannel = make(chan struct{})
 	g.DoneChannel = make(chan struct{})
 	g.KeyChannel = make(chan string, 1)
 	g.Frequence = GAME_FREQUENCE
@@ -208,9 +208,9 @@ func (g *CollectBallonsGame) inputKeyHandler(wg *sync.WaitGroup) {
 			}
 			switch key {
 			case "q":
-				//TODO: check
 				close(g.DoneChannel)
 				close(g.ImpulseChannel)
+				return
 			default:
 				updatePlayer(key, g.Player1, g)
 			}
@@ -238,7 +238,7 @@ func (g *CollectBallonsGame) impulseGenerator(wg *sync.WaitGroup) {
 				return
 			}
 		default:
-			g.ImpulseChannel <- true
+			g.ImpulseChannel <- struct{}{}
 			time.Sleep(g.Frequence)
 		}
 	}
