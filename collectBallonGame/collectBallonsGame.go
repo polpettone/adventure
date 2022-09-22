@@ -90,12 +90,11 @@ func (g *CollectBallonsGame) checkGameOverCriteria() {
 func (g *CollectBallonsGame) Run() {
 
 	wg := new(sync.WaitGroup)
-	wg.Add(4)
+	wg.Add(3)
 
 	go g.impulseGenerator(wg)
 	go g.inputKeyReceiver(wg)
-	go g.inputKeyHandler(wg)
-	go g.gameOverHandler(wg)
+	go g.gameHandler(wg)
 
 	wg.Wait()
 	close(g.KeyChannel)
@@ -181,21 +180,7 @@ func updatePlayer(key string, player *models.Player, g *CollectBallonsGame) {
 
 }
 
-func (g *CollectBallonsGame) gameOverHandler(wg *sync.WaitGroup) {
-
-	defer wg.Done()
-
-	for {
-		time.Sleep(time.Second)
-		if g.GameState == GAMEOVER {
-			g.Engine.ClearScreen()
-			return
-		}
-	}
-
-}
-
-func (g *CollectBallonsGame) inputKeyHandler(wg *sync.WaitGroup) {
+func (g *CollectBallonsGame) gameHandler(wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	for {
@@ -219,6 +204,9 @@ func (g *CollectBallonsGame) inputKeyHandler(wg *sync.WaitGroup) {
 			if !ok {
 				logging.Log.InfoLog.Println("ImpulseChannel Closed, leave gameHandler")
 				return
+			}
+			if g.GameState == GAMEOVER {
+				g.Engine.ClearScreen()
 			}
 			g.Update()
 		default:
@@ -256,13 +244,13 @@ func (g *CollectBallonsGame) inputKeyReceiver(wg *sync.WaitGroup) {
 				logging.Log.InfoLog.Println("Input KeyReceiver stopped")
 				return
 			}
-
 		default:
 			//take care, this will block until key pressed
 			os.Stdin.Read(b)
 			i := string(b)
 			g.KeyChannel <- i
 		}
+
 	}
 }
 

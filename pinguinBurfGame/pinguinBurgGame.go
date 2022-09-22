@@ -106,7 +106,7 @@ func (g *PinguinBurfGame) Run() {
 
 	go g.impulseGenerator(wg)
 	go g.inputKeyReceiver(wg)
-	go g.inputKeyHandler(wg)
+	go g.gameHandler(wg)
 
 	wg.Wait()
 	close(g.KeyChannel)
@@ -328,7 +328,8 @@ func (g *PinguinBurfGame) inputKeyReceiver(wg *sync.WaitGroup) {
 	}
 }
 
-func (g *PinguinBurfGame) inputKeyHandler(wg *sync.WaitGroup) {
+func (g *PinguinBurfGame) gameHandler(wg *sync.WaitGroup) {
+	defer wg.Done()
 
 	for {
 		select {
