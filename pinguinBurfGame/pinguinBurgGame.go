@@ -5,6 +5,7 @@ import (
 	"math/rand"
 	"os"
 	"reflect"
+	"sync"
 	"text/tabwriter"
 	"time"
 
@@ -15,6 +16,8 @@ import (
 	"github.com/polpettone/adventure/models"
 )
 
+const GAME_FREQUENCE time.Duration = time.Second / 20
+
 type PinguinBurfGame struct {
 	GameMap *models.Map
 	Player1 *models.Player
@@ -24,6 +27,12 @@ type PinguinBurfGame struct {
 	Enemies map[uuid.UUID]*models.Enemy
 
 	Engine engine.Engine
+
+	ImpulseChannel chan struct{}
+	DoneChannel    chan struct{}
+	KeyChannel     chan string
+
+	Frequence time.Duration
 }
 
 func (g *PinguinBurfGame) GetName() string {
@@ -82,17 +91,27 @@ func (g *PinguinBurfGame) Init(engine engine.Engine) {
 	g.Player2 = player2
 
 	g.Engine = engine
+
+	g.ImpulseChannel = make(chan struct{})
+	g.DoneChannel = make(chan struct{})
+	g.KeyChannel = make(chan string, 1)
+	g.Frequence = GAME_FREQUENCE
+
 }
 
 func (g *PinguinBurfGame) Run() {
 
-	impulseChannel := make(chan bool, 1)
-	keyChannel := make(chan string, 1)
-	go impulseGenerator(impulseChannel, time.Second/10)
-	go inputKeyReceiver(keyChannel)
-	go inputKeyHandler(keyChannel, impulseChannel, g)
+	wg := new(sync.WaitGroup)
+	wg.Add(3)
 
-	select {}
+	go g.impulseGenerator(wg)
+	go g.inputKeyReceiver(wg)
+	go g.inputKeyHandler(wg)
+
+	wg.Wait()
+	close(g.KeyChannel)
+	logging.Log.InfoLog.Printf("%s Gameover", g.GetName())
+
 }
 
 func (g PinguinBurfGame) Update(key string) error {
@@ -288,42 +307,71 @@ func initItems(count int) map[uuid.UUID]*models.Item {
 	return itemsMap
 }
 
-func inputKeyReceiver(keyChannel chan string) {
+func (g *PinguinBurfGame) inputKeyReceiver(wg *sync.WaitGroup) {
+	defer wg.Done()
+	logging.Log.InfoLog.Println("Start InputKeyReceiver")
 	var b []byte = make([]byte, 1)
 	for {
-		os.Stdin.Read(b)
-		i := string(b)
-		keyChannel <- i
+
+		select {
+		case _, ok := <-g.DoneChannel:
+			if !ok {
+				logging.Log.InfoLog.Println("Input KeyReceiver stopped")
+				return
+			}
+		default:
+			//take care, this will block until key pressed
+			os.Stdin.Read(b)
+			i := string(b)
+			g.KeyChannel <- i
+		}
 	}
 }
 
-func inputKeyHandler(keyChannel chan string, impulseChannel chan bool, g *PinguinBurfGame) {
+func (g *PinguinBurfGame) inputKeyHandler(wg *sync.WaitGroup) {
 
 	for {
 		select {
 
-		case key := <-keyChannel:
-
+		case key, ok := <-g.KeyChannel:
+			if !ok {
+				logging.Log.InfoLog.Println("KeyChannel Closed, leave gameHandler")
+				return
+			}
 			switch key {
 			case "q":
-				fmt.Printf("%s", "bye bye")
-				os.Exit(0)
-			case "r":
-				fmt.Printf("%s", "reload \n")
+				close(g.DoneChannel)
+				close(g.ImpulseChannel)
+				return
 			default:
 				g.Update(key)
 			}
 
-		case <-impulseChannel:
+		case _, ok := <-g.ImpulseChannel:
+			if !ok {
+				logging.Log.InfoLog.Println("ImpulseChannel Closed, leave gameHandler")
+				return
+			}
 			g.UpdateEnemies()
+		default:
+
 		}
 	}
 
 }
 
-func impulseGenerator(impulseChannel chan bool, frequence time.Duration) {
+func (g *PinguinBurfGame) impulseGenerator(wg *sync.WaitGroup) {
+	defer wg.Done()
 	for {
-		impulseChannel <- true
-		time.Sleep(frequence)
+		select {
+		case _, ok := <-g.DoneChannel:
+			if !ok {
+				logging.Log.InfoLog.Println("Stop Impulse Generator")
+				return
+			}
+		default:
+			g.ImpulseChannel <- struct{}{}
+			time.Sleep(g.Frequence)
+		}
 	}
 }
