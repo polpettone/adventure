@@ -1,0 +1,3 @@
+## Starten
+
+```go run .```
